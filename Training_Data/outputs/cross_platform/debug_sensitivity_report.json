@@ -1,0 +1,29 @@
+{
+  "normalization_applied": true,
+  "model_feature_count": 38,
+  "missing_derived_before_fill": [],
+  "base_no_guard_row2": {
+    "bid_adjustment": -0.03555496409535408,
+    "budget_adjustment": 0.15909443795681,
+    "audience_action_id": 0.0,
+    "creative_action_id": 3.0
+  },
+  "base_guard_row2": {
+    "bid_adjustment": -0.03555496409535408,
+    "budget_adjustment": 0.15909443795681,
+    "audience_action_id": 0.0,
+    "creative_action_id": 3.0
+  },
+  "scenario_delta_no_guard_row2": {
+    "bid_adjustment": 6.92903995513916e-05,
+    "budget_adjustment": 9.274482727050781e-05,
+    "audience_action_id": 0.0,
+    "creative_action_id": 0.0
+  },
+  "scenario_delta_guard_row2": {
+    "bid_adjustment": 6.92903995513916e-05,
+    "budget_adjustment": -0.15909443795681,
+    "audience_action_id": 2.0,
+    "creative_action_id": 0.0
+  }
+}

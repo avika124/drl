@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DRL Campaign Optimization — Structure &amp; Connections</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --border: #2d3a4d;
+      --text: #e6edf3;
+      --muted: #8b9cb3;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --warn: #d29922;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+    header {
+      padding: 2rem 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #1c2636 0%, var(--bg) 100%);
+    }
+    header h1 { margin: 0 0 0.5rem; font-size: 1.65rem; font-weight: 600; }
+    header p { margin: 0; color: var(--muted); max-width: 56rem; }
+    nav.toc {
+      padding: 1rem 1.5rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    nav.toc a {
+      color: var(--accent);
+      text-decoration: none;
+      margin-right: 1.25rem;
+      font-size: 0.9rem;
+    }
+    nav.toc a:hover { text-decoration: underline; }
+    main { max-width: 58rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
+    section { margin-bottom: 2.5rem; }
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    h3 { font-size: 1.05rem; margin: 1.25rem 0 0.65rem; color: var(--accent2); }
+    p { margin: 0 0 0.85rem; color: var(--muted); }
+    ul { margin: 0 0 1rem; padding-left: 1.35rem; color: var(--muted); }
+    li { margin-bottom: 0.35rem; }
+    code, .tree {
+      font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+      font-size: 0.82rem;
+    }
+    .tree {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+      white-space: pre;
+      color: #c9d1d9;
+      line-height: 1.45;
+    }
+    .tree .dir { color: var(--accent); }
+    .tree .file { color: #79c0ff; }
+    .tree .note { color: var(--muted); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 0.75rem 0 1rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.65rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: var(--surface); color: var(--text); font-weight: 600; }
+    td { color: var(--muted); }
+    td strong { color: var(--text); }
+    .mermaid {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      margin: 0.75rem 0;
+    }
+    .card strong { color: var(--text); }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    .legend span { display: inline-block; margin-right: 1rem; }
+    .tag { display: inline-block; padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+    .tag-m1 { background: #1f3d2e; color: #3fb950; }
+    .tag-m2 { background: #1e2a44; color: #58a6ff; }
+    .tag-m3 { background: #3d2e1f; color: #d29922; }
+    .tag-m4 { background: #2e1f3d; color: #a371f7; }
+    .tag-m5 { background: #3d1f2e; color: #f778ba; }
+    /* Interactive step-by-step walkthrough */
+    .flow-walkthrough { margin: 2rem 0; padding: 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+    .flow-walkthrough h3 { margin-top: 0; color: var(--accent); font-size: 1.05rem; }
+    .flow-toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 1rem; }
+    .flow-toolbar button {
+      padding: 0.45rem 0.9rem; cursor: pointer; border-radius: 6px;
+      border: 1px solid var(--border); background: #21262d; color: var(--text); font-size: 0.9rem;
+    }
+    .flow-toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+    .flow-toolbar button.primary { background: #238636; border-color: #238636; color: #fff; }
+    .flow-toolbar button.primary:hover { filter: brightness(1.08); }
+    .flow-step-indicator { margin-left: auto; color: var(--muted); font-size: 0.88rem; }
+    .flow-row { display: flex; align-items: stretch; flex-wrap: wrap; gap: 0.35rem; margin: 0.75rem 0; justify-content: flex-start; }
+    .flow-node {
+      flex: 1 1 120px; max-width: 220px; min-height: 4.5rem;
+      padding: 0.65rem 0.75rem; border: 2px solid var(--border); border-radius: 8px;
+      background: #0d1117; color: var(--muted); font-size: 0.8rem; line-height: 1.35;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s, color 0.2s;
+    }
+    .flow-node strong { display: block; color: var(--text); margin-bottom: 0.3rem; font-size: 0.88rem; }
+    .flow-node.active {
+      border-color: var(--accent2); color: var(--text);
+      box-shadow: 0 0 0 2px rgba(63, 185, 80, 0.25);
+      transform: translateY(-2px);
+    }
+    .flow-node.dim { opacity: 0.45; }
+    .flow-arrow { align-self: center; color: var(--border); font-size: 1.1rem; user-select: none; flex: 0 0 auto; }
+    .flow-caption {
+      margin: 0.75rem 0 0; padding: 0.75rem 1rem; background: #0d1117; border-left: 3px solid var(--accent);
+      color: var(--muted); font-size: 0.9rem; min-height: 3rem;
+    }
+    .flow-caption kbd { background: #21262d; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+    @media (max-width: 700px) {
+      .flow-row { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); margin: 0.15rem 0; }
+      .flow-node { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>DRL Campaign Optimization</h1>
+    <p>Visual map of the <code>drl/</code> repository: folder layout, M1–M5 pipeline, and how Python modules and backend services connect. Open this file in any browser; diagrams render via Mermaid (requires network for the CDN script).</p>
+  </header>
+  <nav class="toc">
+    <a href="#structure">File structure</a>
+    <a href="#m1m5">M1–M5 pipeline</a>
+    <a href="#connections">Module connections</a>
+    <a href="#dataflow">M1 → M2 data flow</a>
+    <a href="#backend">Backend integration</a>
+    <a href="#walkthrough">Step-by-step</a>
+    <a href="#folders">Data &amp; artifacts</a>
+  </nav>
+  <main>
+    <section id="structure">
+      <h2>1. Repository file structure</h2>
+      <p>Top-level layout of the DRL package and related folders. Core logic lives as flat <code>.py</code> modules at the root; service wiring lives under <code>backend/</code>.</p>
+      <div class="tree"><span class="dir">drl/</span>
+├── <span class="file">__init__.py</span>          <span class="note"># Public API exports</span>
+├── <span class="file">config.py</span>
+├── <span class="file">state_action.py</span>
+├── <span class="file">networks.py</span>
+├── <span class="file">sac_agent.py</span>
+├── <span class="file">replay_buffer.py</span>
+├── <span class="file">reward_functions.py</span>
+├── <span class="file">offline_trainer.py</span>
+├── <span class="file">safe_agent.py</span>
+├── <span class="file">hybrid_optimizer.py</span>
+├── <span class="file">continuous_learning.py</span>
+├── <span class="file">ab_testing.py</span>
+├── <span class="file">xai_narrator.py</span>
+├── <span class="file">audience_constraints.py</span>
+├── <span class="file">benchmark_model.py</span>
+├── <span class="file">forecast_feedback.py</span>
+├── <span class="file">platform_model_registry.py</span>
+├── <span class="file">x_model.py</span>
+├── <span class="file">x_training_data.py</span>
+├── <span class="file">x_training.py</span>
+├── <span class="file">cross_platform_optimizer.py</span>
+├── <span class="file">cross_platform_drl_engine.py</span>
+├── <span class="file">drl_integration.py</span>
+├── <span class="file">bigquery_loader.py</span>
+├── <span class="file">train.py</span> / <span class="file">train_bigquery_offline.py</span>
+├── <span class="file">run_drl_on_csv.py</span> / <span class="file">run_cross_platform_optimizer.py</span>
+├── <span class="file">generate_synthetic_action_logs.py</span> / <span class="file">create_cross_platform_states.py</span>
+├── <span class="dir">backend/</span>             <span class="note"># FastAPI / engine / adapters</span>
+│   ├── <span class="file">engine.py</span>, <span class="file">routes.py</span>, <span class="file">models.py</span>, <span class="file">data_pipeline.py</span>
+│   ├── <span class="dir">services/ai_optimization/</span>  <span class="file">engine.py</span>, <span class="file">routes.py</span>
+│   ├── <span class="dir">adapters/</span>              <span class="note"># google, meta, tiktok, linkedin, amazon</span>
+│   ├── <span class="dir">shared/</span>
+│   └── <span class="dir">alembic/versions/</span>      <span class="note"># DB migrations</span>
+├── <span class="dir">Training_Data/</span>       <span class="note"># CSV templates, synthetic data, outputs/</span>
+├── <span class="dir">models/</span>               <span class="note"># synthetic_run, bq_run checkpoints</span>
+├── <span class="dir">checkpoints/</span>
+├── <span class="dir">m1_outputs/</span>, <span class="dir">m2_outputs/</span>
+├── <span class="dir">demos/notebooks/</span>
+├── <span class="file">README.md</span>, <span class="file">ARCHITECTURE.md</span>, <span class="file">Module_File_Mapping.md</span>, …
+└── <span class="file">.gitignore</span>, <span class="file">env.example.full</span></div>
+    </section>
+
+    <section id="m1m5">
+      <h2>2. M1–M5 architecture (what connects to what)</h2>
+      <p class="legend">
+        <span><span class="tag tag-m1">M1</span> P-Training</span>
+        <span><span class="tag tag-m2">M2</span> P-Execution</span>
+        <span><span class="tag tag-m3">M3</span> X-Data</span>
+        <span><span class="tag tag-m4">M4</span> X-Train</span>
+        <span><span class="tag tag-m5">M5</span> X-Exec</span>
+      </p>
+      <div class="mermaid">
+flowchart TB
+  subgraph M1["M1 — P-Training (per-platform SAC)"]
+    T1["train.py / train_bigquery_offline.py"]
+    OT["offline_trainer.py"]
+    SA["sac_agent.py"]
+    BQ["bigquery_loader.py"]
+    T1 --> OT
+    T1 --> SA
+    BQ --> OT
+    OT --> SA
+  end
+  subgraph M2["M2 — P-Execution (inference + hybrid)"]
+    REG["platform_model_registry.py"]
+    HY["hybrid_optimizer.py"]
+    SAFE["safe_agent.py"]
+    REG --> SAFE
+    SAFE --> HY
+  end
+  subgraph M3["M3 — X-Training Data"]
+    XTD["x_training_data.py"]
+    CPO_AUX["cross_platform_optimizer.py"]
+    XTD --> CPO_AUX
+  end
+  subgraph M4["M4 — X-Training"]
+    XT["x_training.py"]
+    XM["x_model.py"]
+    XT --> XM
+  end
+  subgraph M5["M5 — X-Execution"]
+    CPE["cross_platform_drl_engine.py"]
+    CPO["cross_platform_optimizer.py"]
+    CPE --> CPO
+    CPE --> XM
+    CPO --> HY
+  end
+  SA --> REG
+  XM --> CPE
+  XTD --> XT
+      </div>
+      <div class="card">
+        <strong>Reading order:</strong> Config and state (<code>config.py</code>, <code>state_action.py</code>) underpin M1. Checkpoints feed <code>platform_model_registry.py</code> for M2. Portfolio transitions from M3 feed <code>x_training.py</code> (M4). <code>cross_platform_drl_engine.py</code> orchestrates M5 using <code>x_model.py</code> and per-platform paths through <code>cross_platform_optimizer.py</code> and <code>hybrid_optimizer.py</code>.
+      </div>
+    </section>
+
+    <section id="connections">
+      <h2>3. Module → role matrix</h2>
+      <table>
+        <thead>
+          <tr><th>File</th><th>Connects to / used by</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>config.py</strong></td><td>All stages — DRLConfig, TrainingConfig, GuardrailConfig, CrossPlatformStrategyConfig</td></tr>
+          <tr><td><strong>state_action.py</strong></td><td>M1, M2, M5 — CampaignState, ActionSpace, DRLDirective</td></tr>
+          <tr><td><strong>networks.py</strong></td><td><code>sac_agent.py</code> — actor/critic/value nets</td></tr>
+          <tr><td><strong>sac_agent.py</strong></td><td>M1 training; M2 <code>load_sac_for_inference</code>; registry</td></tr>
+          <tr><td><strong>replay_buffer.py</strong></td><td><code>offline_trainer.py</code>, <code>continuous_learning.py</code></td></tr>
+          <tr><td><strong>reward_functions.py</strong></td><td>Training — RewardComputer</td></tr>
+          <tr><td><strong>offline_trainer.py</strong></td><td>M1 — CQL/offline loop from historical data</td></tr>
+          <tr><td><strong>safe_agent.py</strong></td><td>M2 — wraps SAC with guardrails</td></tr>
+          <tr><td><strong>hybrid_optimizer.py</strong></td><td>M2/M5 — DRL + LLM; called from cross-platform flow</td></tr>
+          <tr><td><strong>platform_model_registry.py</strong></td><td>M2/M5 — one P-model per ad platform</td></tr>
+          <tr><td><strong>x_model.py</strong></td><td>M3–M5 — XModelAgent, portfolio allocation</td></tr>
+          <tr><td><strong>x_training_data.py</strong></td><td>M3 — builds X transitions from portfolio snapshots</td></tr>
+          <tr><td><strong>x_training.py</strong></td><td>M4 — trains XModelAgent</td></tr>
+          <tr><td><strong>cross_platform_optimizer.py</strong></td><td>M3/M5 — budget/allocation heuristics + portfolio types</td></tr>
+          <tr><td><strong>cross_platform_drl_engine.py</strong></td><td>M5 — top-level orchestrator, dual-run / readiness</td></tr>
+          <tr><td><strong>drl_integration.py</strong></td><td>Async integration for backend services</td></tr>
+          <tr><td><strong>ab_testing.py</strong></td><td>Experiments — ties into engine / validation</td></tr>
+          <tr><td><strong>xai_narrator.py</strong></td><td>Human-readable narratives for optimization runs</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="dataflow">
+      <h2>4. Data flow: M1 checkpoints → M2 inference</h2>
+      <div class="mermaid">
+flowchart LR
+  subgraph train["M1 training"]
+    E["MockCampaignEnv or BigQuery states"]
+    R["replay_buffer + reward_functions"]
+    SAC["SACAgent.train"]
+    E --> R --> SAC
+  end
+  subgraph artifacts["Artifacts"]
+    PT["agent.pt / checkpoints"]
+    J["training_info.json"]
+  end
+  subgraph infer["M2 execution"]
+    L["load_sac_for_inference"]
+    SD["SafeDRLAgent"]
+    H["HybridDRLLLMOptimizer"]
+    L --> SD --> H
+  end
+  SAC --> PT
+  SAC --> J
+  PT --> L
+      </div>
+      <p>CSV runners (<code>run_drl_on_csv.py</code>, <code>run_cross_platform_optimizer.py</code>) bridge file-based campaign rows to the same stack.</p>
+
+      <section id="walkthrough" class="flow-walkthrough">
+        <h2 style="margin-top:0;border:none;padding:0;">Interactive: run the flowchart step by step</h2>
+        <p style="margin-top:0.5rem;">Use <strong>Next</strong> / <strong>Prev</strong> or <strong>Play</strong> to highlight one stage at a time—the same order as the Mermaid diagrams above.</p>
+
+        <h3>M1 → M2 — training to inference</h3>
+        <div class="flow-toolbar">
+          <button type="button" class="primary" id="btn-m1m2-play">Play</button>
+          <button type="button" id="btn-m1m2-pause">Pause</button>
+          <button type="button" id="btn-m1m2-prev">← Prev</button>
+          <button type="button" id="btn-m1m2-next">Next →</button>
+          <button type="button" id="btn-m1m2-reset">Reset</button>
+          <span class="flow-step-indicator" id="ind-m1m2">Step 0 / 7</span>
+        </div>
+        <div class="flow-row" id="row-m1m2" aria-live="polite"></div>
+        <p class="flow-caption" id="cap-m1m2"></p>
+
+        <h3>Backend — request into DRL</h3>
+        <div class="flow-toolbar">
+          <button type="button" class="primary" id="btn-be-play">Play</button>
+          <button type="button" id="btn-be-pause">Pause</button>
+          <button type="button" id="btn-be-prev">← Prev</button>
+          <button type="button" id="btn-be-next">Next →</button>
+          <button type="button" id="btn-be-reset">Reset</button>
+          <span class="flow-step-indicator" id="ind-be">Step 0 / 6</span>
+        </div>
+        <div class="flow-row" id="row-be"></div>
+        <p class="flow-caption" id="cap-be"></p>
+
+        <h3>M1–M5 — module stages (high level)</h3>
+        <div class="flow-toolbar">
+          <button type="button" class="primary" id="btn-m15-play">Play</button>
+          <button type="button" id="btn-m15-pause">Pause</button>
+          <button type="button" id="btn-m15-prev">← Prev</button>
+          <button type="button" id="btn-m15-next">Next →</button>
+          <button type="button" id="btn-m15-reset">Reset</button>
+          <span class="flow-step-indicator" id="ind-m15">Step 0 / 5</span>
+        </div>
+        <div class="flow-row" id="row-m15"></div>
+        <p class="flow-caption" id="cap-m15"></p>
+      </section>
+    </section>
+
+    <section id="backend">
+      <h2>5. Backend: how the app connects to DRL</h2>
+      <div class="mermaid">
+flowchart TB
+  subgraph api["backend/"]
+    R["routes.py"]
+    E["engine.py"]
+    DP["data_pipeline.py"]
+  end
+  subgraph aio["services/ai_optimization/"]
+    AE["engine.py"]
+    AR["routes.py"]
+  end
+  subgraph ads["adapters/"]
+    G["google_ads_adapter.py"]
+    M["meta_ads_adapter.py"]
+    T["tiktok_adapter.py"]
+    L["linkedin_ads_adapter.py"]
+    A["amazon_ads_adapter.py"]
+    B["base.py"]
+  end
+  R --> E
+  E --> AE
+  AR --> AE
+  E --> DP
+  G --> B
+  M --> B
+  T --> B
+  L --> B
+  A --> B
+  AE -.->|"uses DRL types / integration"| DRL["Root drl/*.py package"]
+      </div>
+      <p>Adapters normalize each platform’s API; the optimization service layer exposes routes/engine that call into the shared DRL module (<code>drl_integration.py</code> and core agents).</p>
+    </section>
+
+    <section id="folders">
+      <h2>6. Data, models, and demo outputs</h2>
+      <ul>
+        <li><strong>Training_Data/</strong> — input templates, synthetic CSVs, Criteo-style pretrain files, and <code>outputs/</code> (single-platform actions, cross-platform JSON, platform test CSVs).</li>
+        <li><strong>models/</strong> — persisted runs (<code>synthetic_run/</code>, <code>bq_run/</code>) with epochs and <code>training_info.json</code>.</li>
+        <li><strong>checkpoints/</strong>, <strong>m1_outputs/</strong>, <strong>m2_outputs/</strong> — run logs and JSON summaries (<code>m*_execution_log.txt</code> at repo root).</li>
+        <li><strong>demos/notebooks/</strong> — Jupyter demos for single- vs cross-platform optimizers.</li>
+      </ul>
+    </section>
+  </main>
+  <footer>
+    Generated for the DRL repository · Diagrams: Mermaid · See also <code>README.md</code>, <code>ARCHITECTURE.md</code>, <code>Module_File_Mapping.md</code>, <code>Data_Flow_M1_to_M2.md</code>
+  </footer>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "neutral",
+      flowchart: { curve: "basis", padding: 12 },
+      securityLevel: "loose"
+    });
+
+    (function () {
+      function buildRow(containerId, labels, subtitles) {
+        var el = document.getElementById(containerId);
+        el.innerHTML = "";
+        for (var i = 0; i < labels.length; i++) {
+          var node = document.createElement("div");
+          node.className = "flow-node";
+          node.dataset.step = String(i);
+          var strong = document.createElement("strong");
+          strong.textContent = labels[i];
+          node.appendChild(strong);
+          if (subtitles[i]) {
+            var span = document.createElement("span");
+            span.textContent = subtitles[i];
+            node.appendChild(span);
+          }
+          el.appendChild(node);
+          if (i < labels.length - 1) {
+            var arr = document.createElement("span");
+            arr.className = "flow-arrow";
+            arr.textContent = "→";
+            arr.setAttribute("aria-hidden", "true");
+            el.appendChild(arr);
+          }
+        }
+        return el.querySelectorAll(".flow-node");
+      }
+
+      function setActive(nodes, step, capEl, texts) {
+        var n = nodes.length;
+        var s = Math.max(0, Math.min(step, n - 1));
+        for (var i = 0; i < n; i++) {
+          nodes[i].classList.toggle("active", i === s);
+          nodes[i].classList.toggle("dim", i !== s);
+        }
+        if (capEl && texts[s]) capEl.textContent = texts[s];
+      }
+
+      function wireWalkthrough(config) {
+        var nodes = buildRow(config.rowId, config.labels, config.subtitles);
+        var step = 0;
+        var timer = null;
+        var cap = document.getElementById(config.capId);
+        var ind = document.getElementById(config.indId);
+
+        function update() {
+          setActive(nodes, step, cap, config.captions);
+          ind.textContent = "Step " + (step + 1) + " / " + nodes.length;
+        }
+
+        function next() {
+          step = (step + 1) % nodes.length;
+          update();
+        }
+        function prev() {
+          step = (step - 1 + nodes.length) % nodes.length;
+          update();
+        }
+        function reset() {
+          step = 0;
+          update();
+        }
+        function play() {
+          if (timer) clearInterval(timer);
+          timer = setInterval(next, config.intervalMs || 2200);
+        }
+        function pause() {
+          if (timer) {
+            clearInterval(timer);
+            timer = null;
+          }
+        }
+
+        document.getElementById(config.nextId).addEventListener("click", next);
+        document.getElementById(config.prevId).addEventListener("click", prev);
+        document.getElementById(config.resetId).addEventListener("click", function () {
+          pause();
+          reset();
+        });
+        document.getElementById(config.playId).addEventListener("click", play);
+        document.getElementById(config.pauseId).addEventListener("click", pause);
+
+        reset();
+        return { next: next, prev: prev };
+      }
+
+      wireWalkthrough({
+        rowId: "row-m1m2",
+        capId: "cap-m1m2",
+        indId: "ind-m1m2",
+        playId: "btn-m1m2-play",
+        pauseId: "btn-m1m2-pause",
+        nextId: "btn-m1m2-next",
+        prevId: "btn-m1m2-prev",
+        resetId: "btn-m1m2-reset",
+        labels: [
+          "Data source",
+          "Buffer + reward",
+          "SACAgent.train",
+          "Artifacts",
+          "load_sac_for_inference",
+          "SafeDRLAgent",
+          "HybridDRLLLMOptimizer"
+        ],
+        subtitles: [
+          "Mock env or BigQuery rows",
+          "Transitions + RewardComputer",
+          "Updates actor & critic",
+          "agent.pt + training_info.json",
+          "Loads checkpoint for serving",
+          "Guardrails on actions",
+          "DRL + optional LLM tactics"
+        ],
+        captions: [
+          "Step 1: Campaign states come from a synthetic environment or from BigQuery (historical rows).",
+          "Step 2: (state, action, reward, next_state) go into the replay buffer; rewards use reward_functions.",
+          "Step 3: SACAgent.train runs gradient updates and produces a trained policy and value nets.",
+          "Step 4: Weights are saved as agent.pt (or checkpoints/); training_info.json records run metadata.",
+          "Step 5: At serving time, load_sac_for_inference restores the SAC agent from disk.",
+          "Step 6: SafeDRLAgent wraps the policy so bid/budget/audience/creative actions respect limits.",
+          "Step 7: HybridDRLLLMOptimizer produces the final strategic directive (and optional tactical LLM output)."
+        ]
+      });
+
+      wireWalkthrough({
+        rowId: "row-be",
+        capId: "cap-be",
+        indId: "ind-be",
+        playId: "btn-be-play",
+        pauseId: "btn-be-pause",
+        nextId: "btn-be-next",
+        prevId: "btn-be-prev",
+        resetId: "btn-be-reset",
+        labels: [
+          "routes.py",
+          "engine.py",
+          "data_pipeline.py",
+          "ai_opt / engine",
+          "Adapters → base",
+          "drl/*.py package"
+        ],
+        subtitles: [
+          "HTTP API entry",
+          "Orchestrates DRL load + inference",
+          "Fetch & normalize (when wired)",
+          "DRLIntegrationLayer glue",
+          "Google, Meta, … share base.py",
+          "Imports: agents, integration"
+        ],
+        captions: [
+          "Step 1: A client calls FastAPI; routes.py handles /api/drl or related paths.",
+          "Step 2: The backend engine loads checkpoints and runs get_optimization (or delegates).",
+          "Step 3: data_pipeline.py can fetch metrics from ad platforms and normalize—use when integrated.",
+          "Step 4: services/ai_optimization/engine.py exposes DRLIntegrationLayer for the ai-optimization routes.",
+          "Step 5: Platform adapters inherit or use base.py so each network API looks uniform.",
+          "Step 6 (dotted line in the diagram): Python imports from the root drl package—types, SAC, safe agent, hybrid—not a second HTTP hop."
+        ],
+        intervalMs: 2400
+      });
+
+      wireWalkthrough({
+        rowId: "row-m15",
+        capId: "cap-m15",
+        indId: "ind-m15",
+        playId: "btn-m15-play",
+        pauseId: "btn-m15-pause",
+        nextId: "btn-m15-next",
+        prevId: "btn-m15-prev",
+        resetId: "btn-m15-reset",
+        labels: ["M1 P-Train", "M2 P-Exec", "M3 X-Data", "M4 X-Train", "M5 X-Exec"],
+        subtitles: [
+          "Per-platform SAC training",
+          "Registry + safe + hybrid",
+          "Portfolio transitions",
+          "Train XModelAgent",
+          "cross_platform_drl_engine"
+        ],
+        captions: [
+          "M1: Train one SAC policy per ad platform (offline_trainer, sac_agent, checkpoints).",
+          "M2: Load P-models in the registry; SafeDRLAgent + Hybrid for live campaign actions.",
+          "M3: x_training_data builds X transitions from allocation history / portfolio snapshots.",
+          "M4: x_training trains the cross-platform X model from M3 data.",
+          "M5: cross_platform_drl_engine + cross_platform_optimizer run portfolio-level allocation using the X model."
+        ],
+        intervalMs: 2600
+      });
+    })();
+  </script>
+</body>
+</html>

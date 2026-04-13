@@ -1,0 +1,742 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2868
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 LucidaGrande;\f2\fnil\fcharset0 Menlo-Bold;
+\f3\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red25\green25\blue25;\red109\green109\blue109;}
+{\*\expandedcolortbl;;\cssrgb\c12941\c12941\c12941;\cssrgb\c50196\c50196\c50196;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{circle\}}{\leveltext\leveltemplateid102\'01\uc0\u9702 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}}{\leveltext\leveltemplateid201\'01\'00;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{circle\}}{\leveltext\leveltemplateid202\'01\uc0\u9702 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listname ;}\listid3}
+{\list\listtemplateid4\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid301\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid4}
+{\list\listtemplateid5\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}}{\leveltext\leveltemplateid401\'01\'00;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{circle\}}{\leveltext\leveltemplateid402\'01\uc0\u9702 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listname ;}\listid5}
+{\list\listtemplateid6\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}}{\leveltext\leveltemplateid501\'01\'00;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid6}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}{\listoverride\listid4\listoverridecount0\ls4}{\listoverride\listid5\listoverridecount0\ls5}{\listoverride\listid6\listoverridecount0\ls6}}
+\margl1440\margr1440\vieww25680\viewh19320\viewkind0
+\deftab720
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+Design Document vs. Codebase: DRL/SAC Training & Cross-Platform Optimization\
+\pard\pardeftab720\sa374\partightenfactor0
+
+\fs28 \cf2 PDF Architecture Overview (P & X Model)\cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+
+\fs24 \cf2 The PDF describes a 5-module architecture\'a0in two tiers:\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1092\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth1533\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth11871\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Module\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Name\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Purpose\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1092\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth1533\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth11871\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 1\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 P-Training DRL\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Train a single-platform model\'a0(P-Model) using historical campaign data with DRL\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1092\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth1533\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth11871\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 2\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 P-Execution\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Run the trained P-Model with execution parameters from UI, producing campaign design & results forecasts\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1092\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth1533\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth11871\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 3\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 X-Training Data\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Transform P-Training data into cross-platform (X) training data via aggregation or synthesis\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1092\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth1533\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth11871\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 4\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 X-Training DRL\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Train a cross-platform model\'a0(X-Model) using the transformed training data\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1092\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth1533\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth11871\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 5\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 X-Execution\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Run the X-Model to produce cross-platform campaign design & performance forecasts, calling P-Execution internally\cf0 \cell \lastrow\row
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 Key design concepts:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\partightenfactor0
+\ls1\ilvl0\cf2 {\listtext	\uc0\u8226 	}P-Model\'a0= per-platform DRL model, trained on single-platform historical data\cf0 \
+\ls1\ilvl0\cf2 {\listtext	\uc0\u8226 	}X-Model\'a0= cross-platform DRL model, trained on transformed/aggregated P-data\cf0 \
+\ls1\ilvl0\cf2 {\listtext	\uc0\u8226 	}X-Execution drives P-Execution for each platform underneath\cf0 \
+\ls1\ilvl0\cf2 {\listtext	\uc0\u8226 	}Training parameters and execution parameters are separated\cf0 \
+\ls1\ilvl0\cf2 {\listtext	\uc0\u8226 	}UI provides execution parameters; training uses historical data\cf0 \
+\pard\pardeftab720\partightenfactor0
+\cf3 \
+\pard\pardeftab720\sa374\partightenfactor0
+
+\fs28 \cf2 Codebase Architecture: How It Maps\cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+
+\fs24 \cf2 The codebase implements a more evolved version\'a0of the same P & X architecture. Here's the mapping:\
+\pard\pardeftab720\sa425\partightenfactor0
+\cf2 Module 1 (P-Training) 
+\f1 \uc0\u8594 
+\f0  
+\f2\b drl/sac_agent.py
+\f0\b0 \'a0+ 
+\f2\b drl/train.py
+\f0\b0 \'a0+ 
+\f2\b drl/offline_trainer.py
+\f0\b0 \cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 What the codebase does:\
+A single SAC (Soft Actor-Critic) agent serves as the P-Model. It trains on per-platform campaign data using:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa319\partightenfactor0
+\ls2\ilvl0\cf2 {\listtext	\uc0\u8226 	}Algorithm: SAC with automatic entropy tuning, twin Q-networks, Gumbel-Softmax for discrete actions, and Conservative Q-Learning (CQL) for offline training\cf0 \
+\ls2\ilvl0\cf2 {\listtext	\uc0\u8226 	}State space: 39-dimensional vector (
+\f3 drl/state_action.py:50-179
+\f0 ) containing:\cf0 \
+\pard\tx940\tx1440\pardeftab720\li1440\fi-1440\partightenfactor0
+\ls2\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Core metrics: CTR, CVR, ROAS, CPA, CPC, CPM (6 dims)\cf0 \
+\ls2\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Volume: spend velocity, impression/click/conversion volume (4 dims)\cf0 \
+\ls2\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Temporal: hour, day-of-week, day-of-month, weekend, holiday, days remaining (6 dims)\cf0 \
+\ls2\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Trends: 7-day trends for CTR, CVR, ROAS, CPA, spend (5 dims)\cf0 \
+\ls2\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Competitive: impression share, auction pressure, position (3 dims)\cf0 \
+\ls2\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}ML features: audience quality, creative fatigue, predicted CVR/LTV, propensity (5 dims)\cf0 \
+\ls2\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Context: optimization goal, platform encoding, maturity, budget utilization (4 dims)\cf0 \
+\ls2\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Absolute spend: log-normalized daily spend, total spend, daily budget (3 dims)\cf0 \
+\ls2\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Audience segments: segment count, top segment ROAS, avg frequency (3 dims)\cf0 \
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa319\partightenfactor0
+\ls2\ilvl0\cf2 {\listtext	\uc0\u8226 	}Action space\'a0(
+\f3 drl/state_action.py:274-378
+\f0 ):\cf0 \
+\pard\tx940\tx1440\pardeftab720\li1440\fi-1440\partightenfactor0
+\ls2\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Continuous\'a0(2 dims): bid adjustment [-1,1], budget adjustment [-1,1]\cf0 \
+\ls2\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Discrete\'a0(2 heads \'d7 4 options): audience action (HOLD/EXPAND/REFINE/EXCLUDE), creative action (HOLD/ROTATE/PAUSE_UNDERPERFORMING/TEST_NEW)\cf0 \
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa319\partightenfactor0
+\ls2\ilvl0\cf2 {\listtext	\uc0\u8226 	}Training data (P-training data): Historical campaign metrics from database or CSV (
+\f3 drl/offline_trainer.py:42-158
+\f0 ), extracted as daily snapshots with inferred or logged actions\cf0 \
+\pard\pardeftab720\sa425\partightenfactor0
+\cf2 Module 2 (P-Execution) 
+\f1 \uc0\u8594 
+\f0  
+\f2\b drl/safe_agent.py
+\f0\b0 \'a0+ 
+\f2\b drl/hybrid_optimizer.py
+\f0\b0 \cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 P-Execution\'a0is implemented as a two-layer system:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa319\partightenfactor0
+\ls3\ilvl0\cf2 {\listtext	1	}SafeDRLAgent\'a0(
+\f3 drl/safe_agent.py:281-528
+\f0 ): Wraps the trained SACAgent with production guardrails:\cf0 \
+\pard\tx940\tx1440\pardeftab720\li1440\fi-1440\partightenfactor0
+\ls3\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Bid bounds: max +50%/-30% per action\cf0 \
+\ls3\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Budget bounds: max +30%/-30% per action\cf0 \
+\ls3\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Cooldown: min 4 hours between actions, max 6 actions/day\cf0 \
+\ls3\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Confidence threshold: 0.7 minimum, 0.85 for auto-apply\cf0 \
+\ls3\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Emergency stops: ROAS < 0.5 or CPA > 3\'d7 target triggers automatic pullback\cf0 \
+\ls3\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Automatic rollback if performance drops >15% within 24 hours\cf0 \
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa319\partightenfactor0
+\ls3\ilvl0\cf2 {\listtext	2	}HybridDRLLLMOptimizer\'a0(
+\f3 drl/hybrid_optimizer.py:188-564
+\f0 ): Hierarchical DRL
+\f1 \uc0\u8594 
+\f0 LLM pipeline:\cf0 \
+\pard\tx940\tx1440\pardeftab720\li1440\fi-1440\partightenfactor0
+\ls3\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}DRL Macro Layer\'a0(strategic): Budget allocation, bid strategy, audience priority\cf0 \
+\ls3\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}LLM Micro Layer\'a0(tactical): Creative generation, messaging optimization, offer personalization\cf0 \
+\ls3\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}The DRL produces a 
+\f3 DRLDirective
+\f0 \'a0(
+\f3 drl/state_action.py:393-509
+\f0 ) that constrains LLM output with messaging tone, urgency level, max discount, etc.\cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 Execution parameters from UI\'a0
+\f1 \uc0\u8594 
+\f0  correspond to 
+\f3 CampaignContext
+\f0 \'a0(
+\f3 drl/safe_agent.py:59-78
+\f0 ): current bid, current budget, ROAS, CPA, target CPA, min ROAS\
+\pard\pardeftab720\sa425\partightenfactor0
+\cf2 Module 3 (X-Training Data) 
+\f1 \uc0\u8594 
+\f0  
+\f2\b drl/cross_platform_optimizer.py:663-781
+\f0\b0 \cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 X-Training data transformation\'a0is handled by 
+\f3 PlatformPerformanceTracker
+\f0 :\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\partightenfactor0
+\ls4\ilvl0\cf2 {\listtext	\uc0\u8226 	}Aggregates per-campaign metrics into per-platform portfolio metrics\cf0 \
+\ls4\ilvl0\cf2 {\listtext	\uc0\u8226 	}Computes platform-level ROAS, CPA, CTR, CVR, conversion trends\cf0 \
+\ls4\ilvl0\cf2 {\listtext	\uc0\u8226 	}Builds 
+\f3 PlatformPortfolio
+\f0 \'a0objects from lists of campaign (state, context, info) tuples\cf0 \
+\ls4\ilvl0\cf2 {\listtext	\uc0\u8226 	}Historical daily metrics are tracked per organization per platform (up to 90 days)\cf0 \
+\pard\pardeftab720\sa425\partightenfactor0
+\cf2 Module 4 (X-Training DRL) 
+\f1 \uc0\u8594 
+\f0  
+\f2\b drl/cross_platform_optimizer.py:311-417, 423-657
+\f0\b0 \cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 The X-Model\'a0in the codebase is not a separate neural network. Instead, it uses:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa319\partightenfactor0
+\ls5\ilvl0\cf2 {\listtext	1	}MarginalReturnEstimator\'a0(
+\f3 cross_platform_optimizer.py:311-416
+\f0 ): Estimates diminishing returns per platform using a log-linear response model:\cf0 \
+\pard\tx940\tx1440\pardeftab720\li1440\fi-1440\partightenfactor0
+\ls5\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Revenue(spend) \uc0\u8776  a \'d7 ln(1 + spend/b)\cf0 \
+\ls5\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Marginal ROAS = dRevenue/dSpend = a / (b + spend)\cf0 \
+\ls5\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Uses EMA smoothing and historical daily (spend, revenue) observations\cf0 \
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa319\partightenfactor0
+\ls5\ilvl0\cf2 {\listtext	2	}BudgetAllocator\'a0(
+\f3 cross_platform_optimizer.py:423-657
+\f0 ): Solves constrained budget allocation:\cf0 \
+\pard\tx940\tx1440\pardeftab720\li1440\fi-1440\partightenfactor0
+\ls5\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Objective: maximize composite of weighted marginal ROAS + volume (log conversions) + diversification (entropy) + momentum (trend)\cf0 \
+\ls5\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Constraints: \uc0\u931  budgets = total, min 5% per platform, max 80% per platform, max 20% shift per cycle, 24h cooldown\cf0 \
+\ls5\ilvl1\cf2 {\listtext	
+\f1 \uc0\u9702 
+\f0 	}Uses softmax over composite scores with projected gradient ascent on simplex\cf0 \
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa319\partightenfactor0
+\ls5\ilvl0\cf2 {\listtext	3	}Budget Recommendation for New Campaigns\'a0(
+\f3 cross_platform_optimizer.py:1087-1345
+\f0 ): Sweeps candidate daily budgets ($50 to $50k), builds synthetic CampaignState for each, evaluates via the DRL critic Q-function, and selects the best composite score.\cf0 \
+\pard\pardeftab720\sa425\partightenfactor0
+\cf2 Module 5 (X-Execution) 
+\f1 \uc0\u8594 
+\f0  
+\f2\b CrossPlatformOptimizer.optimize_portfolio()
+\f0\b0 \'a0(line 821-922)\cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 The full pipeline\'a0runs 7 phases:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\partightenfactor0
+\ls6\ilvl0\cf2 {\listtext	1	}Build portfolio snapshot from all campaigns\cf0 \
+\ls6\ilvl0\cf2 {\listtext	2	}Check rebalance cooldown (24h default)\cf0 \
+\ls6\ilvl0\cf2 {\listtext	3	}Estimate marginal returns per platform\cf0 \
+\ls6\ilvl0\cf2 {\listtext	4	}Emergency override for platforms with ROAS < 0.5\cf0 \
+\ls6\ilvl0\cf2 {\listtext	5	}Solve cross-platform budget allocation\cf0 \
+\ls6\ilvl0\cf2 {\listtext	6	}Project portfolio ROAS impact\cf0 \
+\ls6\ilvl0\cf2 {\listtext	7	}Adjust per-campaign budgets proportionally, then run per-campaign DRL optimization\cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 This maps to the PDF's concept of X-Execution calling P-Execution: the 
+\f3 CrossPlatformOptimizer
+\f0 \'a0adjusts budgets at the platform level, then delegates to 
+\f3 BatchOptimizer
+\f0 \'a0
+\f1 \uc0\u8594 
+\f0  
+\f3 HybridDRLLLMOptimizer
+\f0 \'a0for each campaign.\
+Supported platforms\'a0(
+\f3 cross_platform_optimizer.py:49-64
+\f0 ): Meta, Google, TikTok, Amazon, Walmart\
+\pard\pardeftab720\partightenfactor0
+\cf3 \
+\pard\pardeftab720\sa374\partightenfactor0
+
+\fs28 \cf2 Training Output: Detailed Breakdown\cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+
+\fs24 \cf2 Training produces two types of output artifacts, saved via 
+\f3 SACAgent.save()
+\f0 \'a0(
+\f3 drl/sac_agent.py:366-391
+\f0 ):\
+\pard\pardeftab720\sa425\partightenfactor0
+\cf2 1. Primary Model File: 
+\f2\b agent.pt
+\f0\b0 \'a0(PyTorch checkpoint)\cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 Saved with 
+\f3 torch.save()
+\f0 \'a0at 
+\f3 \{checkpoint_dir\}/agent.pt
+\f0 . Contains:\
+\pard\pardeftab720\partightenfactor0
+
+\f3 \cf2 \{\
+ \'a0 \'a0"actor_state_dict": \'a0 \'a0 \'a0 \'a0 \'a0# ActorNetwork weights (policy)\
+ \'a0 \'a0"critic_state_dict": \'a0 \'a0 \'a0 \'a0 # Twin Q-network weights\
+ \'a0 \'a0"critic_target_state_dict": \'a0# Target Q-network weights\
+ \'a0 \'a0"actor_optimizer_state_dict": \'a0# Adam optimizer state for actor\
+ \'a0 \'a0"critic_optimizer_state_dict": # Adam optimizer state for critic\
+ \'a0 \'a0"log_alpha": \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 # Entropy coefficient (log scale)\
+ \'a0 \'a0"alpha_optimizer_state_dict": \'a0# Adam optimizer for entropy tuning\
+ \'a0 \'a0"total_steps": \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 # int - Total gradient steps completed\
+ \'a0 \'a0"config": \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0# dict - DRLConfig snapshot\
+ \'a0 \'a0"training_config": \'a0 \'a0 \'a0 \'a0 \'a0 # dict - TrainingConfig snapshot\
+\}\
+\pard\pardeftab720\sa319\partightenfactor0
+
+\f0 \cf2 This is a PyTorch binary checkpoint (
+\f2\b .pt
+\f0\b0 ), NOT JSON.\'a0It contains serialized neural network weight tensors. The format uses Python's 
+\f3 pickle
+\f0 \'a0protocol internally via 
+\f3 torch.save()
+\f0 .\
+Network architecture\'a0stored in the checkpoint (
+\f3 drl/networks.py
+\f0 ):\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2571\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth7470\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth4455\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Network\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Architecture\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Parameters\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2571\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth7470\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth4455\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 ActorNetwork\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Shared MLP backbone 
+\f1 \uc0\u8594 
+\f0  mean head + log_std head (continuous) + discrete logit heads\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 3 hidden layers \'d7 256 units, LayerNorm, ReLU, 10% dropout\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2571\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth7470\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth4455\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 CriticNetwork(\'d72)\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Twin Q-networks, each: concat(state, continuous_action, one-hot_discrete) 
+\f1 \uc0\u8594 
+\f0  MLP 
+\f1 \uc0\u8594 
+\f0  scalar Q-value\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Same architecture as actor\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2571\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth7470\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth4455\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 CriticTarget\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Copy of Critic, updated via Polyak averaging (\uc0\u964 =0.005)\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Same\cf0 \cell \lastrow\row
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 The input dimension\'a0is 39 (state) + 2 (continuous action) + 8 (two one-hot encoded discrete actions of size 4 each) = 49 for critic networks. Actor takes 39 (state only).\
+\pard\pardeftab720\sa425\partightenfactor0
+\cf2 2. Training Metrics File: 
+\f2\b training_info.json
+\f0\b0 \'a0(JSON)\cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 Saved alongside 
+\f3 agent.pt
+\f0 . Contains training loss curves:\
+\pard\pardeftab720\partightenfactor0
+
+\f3 \cf2 \{\
+ \'a0 \'a0"actor_loss": [0.123, 0.115, ...], \'a0 \'a0 // Per-step actor loss\
+ \'a0 \'a0"critic_loss": [0.456, 0.432, ...], \'a0 \'a0// Per-step critic loss\
+ \'a0 \'a0"alpha_loss": [0.012, 0.011, ...], \'a0 \'a0 // Per-step entropy loss\
+ \'a0 \'a0"alpha": [0.2, 0.19, ...], \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 // Entropy coefficient over time\
+ \'a0 \'a0"q_values": [1.23, 1.45, ...], \'a0 \'a0 \'a0 \'a0 // Q-value estimates\
+ \'a0 \'a0"entropy": [0.89, 0.87, ...] \'a0 \'a0 \'a0 \'a0 \'a0 // Policy entropy over time\
+\}\
+\pard\pardeftab720\sa425\partightenfactor0
+
+\f0 \cf2 3. Offline Training History: 
+\f2\b training_history
+\f0\b0 \'a0(JSON, via 
+\f2\b OfflineTrainer
+\f0\b0 )\cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 Saved by 
+\f3 OfflineTrainer.save_training_history()
+\f0 :\
+\pard\pardeftab720\partightenfactor0
+
+\f3 \cf2 \{\
+ \'a0 \'a0"epoch": [0, 1, 2, ...],\
+ \'a0 \'a0"actor_loss": [0.5, 0.45, ...], \'a0 \'a0 \'a0 \'a0// Per-epoch mean\
+ \'a0 \'a0"critic_loss": [1.2, 1.1, ...],\
+ \'a0 \'a0"alpha": [0.2, 0.19, ...],\
+ \'a0 \'a0"reward_mean": [0.3, 0.35, ...],\
+ \'a0 \'a0"validation_reward": [0.28, 0.33, ...] \'a0// If validation set provided\
+\}\
+\pard\pardeftab720\sa425\partightenfactor0
+
+\f0 \cf2 4. Safe Agent State: 
+\f2\b action_history.json
+\f0\b0 \cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 Saved by 
+\f3 SafeDRLAgent.save()
+\f0 \'a0\'97 the last 1000 action audit entries as JSON.\
+\pard\pardeftab720\sa425\partightenfactor0
+\cf2 5. Continuous Learning Checkpoint: 
+\f2\b learning_state.json
+\f0\b0 \cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 Saved by 
+\f3 ContinuousLearningEngine.save_checkpoint()
+\f0 :\
+\pard\pardeftab720\partightenfactor0
+
+\f3 \cf2 \{\
+ \'a0 \'a0"learning_stats": \{ "online_updates": 500, "batch_updates": 24, ... \},\
+ \'a0 \'a0"outcome_tracker_stats": \{ "actions_tracked": 1500, ... \},\
+ \'a0 \'a0"performance_summary": \{ "reward_mean": 0.42, "drift_detected": false, ... \},\
+ \'a0 \'a0"last_batch_update": "2026-02-20T14:30:00+00:00"\
+\}\
+\pard\pardeftab720\sa425\partightenfactor0
+
+\f0 \cf2 6. Model Version History: 
+\f2\b version_history.json
+\f0\b0 \cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 Saved by 
+\f3 ModelVersionManager
+\f0 :\
+\pard\pardeftab720\partightenfactor0
+
+\f3 \cf2 [\
+ \'a0 \'a0\{\
+ \'a0 \'a0 \'a0 \'a0"version_id": "20260220_143000",\
+ \'a0 \'a0 \'a0 \'a0"timestamp": "2026-02-20T14:30:00+00:00",\
+ \'a0 \'a0 \'a0 \'a0"metrics": \{"reward_mean": 0.42, ...\},\
+ \'a0 \'a0 \'a0 \'a0"description": "Offline pre-training complete",\
+ \'a0 \'a0 \'a0 \'a0"path": "models/drl/20260220_143000"\
+ \'a0 \'a0\}\
+]\
+\pard\pardeftab720\partightenfactor0
+
+\f0 \cf3 \
+\pard\pardeftab720\sa374\partightenfactor0
+
+\fs28 \cf2 Reward Function Design\cf0 \
+\pard\pardeftab720\sa319\partightenfactor0
+
+\fs24 \cf2 The reward function (
+\f3 drl/reward_functions.py:83-458
+\f0 ) is multi-objective with these components:\
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1905\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4825\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7766\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Component\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Weight\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Description\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1905\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4825\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7766\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Primary objective\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 ROAS: 0.4, CPA: 0.3, Conversions: 0.2, CTR: 0.1\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Improvement relative to pre-action metrics\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1905\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4825\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7766\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Efficiency bonus\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 0.1\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Bonus when ROAS > 2.0 target, extra when > 4.0\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1905\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4825\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7766\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Volume bonus\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 0.05\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Log-scaled conversion volume increase\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1905\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4825\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7766\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 LTV bonus\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 0.15\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Acquiring high predicted-LTV customers\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1905\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4825\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7766\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Spend efficiency\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 0.1\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Diminishing returns penalty above 70% utilization; efficiency-at-scale bonus\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1905\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4825\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7766\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Budget violation\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 -1.0\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Proportional penalty for exceeding daily budget\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1905\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4825\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7766\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 CPA violation\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 -0.5\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Penalty when CPA > 1.5\'d7 target\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1905\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4825\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7766\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 ROAS violation\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 -0.5\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Penalty when ROAS below minimum\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1905\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4825\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7766\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Action magnitude\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 -0.01\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Penalizes large changes (smoothness)\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth1905\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4825\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7766\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Action frequency\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 -0.05\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Penalizes frequent changes (stability)\cf0 \cell \lastrow\row
+\pard\pardeftab720\sa319\partightenfactor0
+\cf2 Rewards are normalized with running statistics and clipped to [-10, 10].\
+\pard\pardeftab720\partightenfactor0
+\cf3 \
+\pard\pardeftab720\sa374\partightenfactor0
+
+\fs28 \cf2 Key Differences from PDF Design\cf0 \
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2484\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4037\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7975\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+
+\fs24 \cf2 Aspect\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 PDF Design\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Codebase Implementation\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2484\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4037\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7975\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 P-Model architecture\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Generic "DRL"\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Specific: SAC with Gumbel-Softmax, twin Q-nets, CQL, prioritized replay\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2484\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4037\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7975\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 X-Model approach\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Separate DRL training\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Analytical optimization (marginal ROAS estimation + constrained allocation) rather than a separate neural network\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2484\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4037\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7975\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 X-Training data creation\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 "modeling and data synthesis, or simple aggregations"\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Portfolio-level aggregation from per-campaign states + marginal return estimation from daily spend/revenue history\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2484\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4037\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7975\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 P
+\f1 \uc0\u8594 
+\f0 X dependency\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 "X-Training may require calling P-Training (ideally avoided)"\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Fully decoupled \'97 X-optimizer uses analytical methods, delegates to P-agent only at execution time\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2484\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4037\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7975\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Hybrid DRL+LLM\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Not in PDF\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Codebase adds LLM micro layer for tactical execution (creative, messaging, offers) guided by DRL directives\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2484\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4037\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7975\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Safety/guardrails\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Not in PDF\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Extensive: bid/budget bounds, cooldowns, emergency stops, rollback, confidence thresholds\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2484\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4037\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7975\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Continuous learning\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Not in PDF\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Full online learning pipeline with outcome tracking, drift detection, model versioning\cf0 \cell \row
+
+\itap1\trowd \taflags0 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalc \clshdrawnil \clwWidth2484\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx2880
+\clvertalc \clshdrawnil \clwWidth4037\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx5760
+\clvertalc \clshdrawnil \clwWidth7975\clftsWidth3 \clmart10 \clmarl10 \clmarb10 \clmarr10 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt20 \clpadl20 \clpadb20 \clpadr20 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Training output\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 Not specified\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\partightenfactor0
+\cf2 PyTorch checkpoint (
+\f3 agent.pt
+\f0 ) + JSON metrics/history files\cf0 \cell \lastrow\row
+}

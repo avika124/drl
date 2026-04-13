@@ -1,0 +1,66 @@
+[
+  {
+    "segment_id": "seg_001_returning",
+    "segment_name": "Returning Customers",
+    "platform": "google",
+    "min_budget_pct": 0.10,
+    "max_budget_pct": 0.40,
+    "max_exposures_per_user": 10,
+    "max_daily_frequency": 3,
+    "performance_history": {
+      "roas": 3.5,
+      "cvr": 0.05,
+      "ctr": 0.04,
+      "spend": 500.0,
+      "conversions": 100
+    }
+  },
+  {
+    "segment_id": "seg_002_new",
+    "segment_name": "New Website Visitors",
+    "platform": "google",
+    "min_budget_pct": 0.05,
+    "max_budget_pct": 0.30,
+    "max_exposures_per_user": 10,
+    "max_daily_frequency": 3,
+    "performance_history": {
+      "roas": 2.0,
+      "cvr": 0.02,
+      "ctr": 0.02,
+      "spend": 300.0,
+      "conversions": 30
+    }
+  },
+  {
+    "segment_id": "seg_003_mobile",
+    "segment_name": "Mobile Users Only",
+    "platform": "google",
+    "min_budget_pct": 0.20,
+    "max_budget_pct": 0.50,
+    "max_exposures_per_user": 5,
+    "max_daily_frequency": 2,
+    "performance_history": {
+      "roas": 2.8,
+      "cvr": 0.03,
+      "ctr": 0.03,
+      "spend": 400.0,
+      "conversions": 60
+    }
+  },
+  {
+    "segment_id": "seg_004_high_intent",
+    "segment_name": "High Intent (Cart Abandoners)",
+    "platform": "google",
+    "min_budget_pct": 0.15,
+    "max_budget_pct": 0.45,
+    "max_exposures_per_user": 7,
+    "max_daily_frequency": 4,
+    "performance_history": {
+      "roas": 4.2,
+      "cvr": 0.08,
+      "ctr": 0.05,
+      "spend": 600.0,
+      "conversions": 150
+    }
+  }
+]

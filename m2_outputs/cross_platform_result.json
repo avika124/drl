@@ -1,0 +1,117 @@
+{
+  "organization_id": "org_cross_platform",
+  "timestamp": "2026-03-07T14:31:33.631160+00:00",
+  "portfolio_roas": 1.584,
+  "total_budget": 1000.0,
+  "total_spend": 131.2,
+  "allocations": [
+    {
+      "platform": "google",
+      "current_share": 0.2241,
+      "recommended_share": 0.1969,
+      "shift_pct": -0.0272,
+      "current_budget": 224.09,
+      "recommended_budget": 196.87,
+      "rationale": "Decrease google allocation by 2.7%. to reallocate to higher-performing platforms",
+      "confidence": 0.3
+    },
+    {
+      "platform": "meta",
+      "current_share": 0.1866,
+      "recommended_share": 0.194,
+      "shift_pct": 0.0074,
+      "current_budget": 186.59,
+      "recommended_budget": 194.03,
+      "rationale": "Increase meta allocation by 0.7%. current allocation is near-optimal",
+      "confidence": 0.3
+    },
+    {
+      "platform": "amazon",
+      "current_share": 0.1509,
+      "recommended_share": 0.2244,
+      "shift_pct": 0.0735,
+      "current_budget": 150.91,
+      "recommended_budget": 224.41,
+      "rationale": "Increase amazon allocation by 7.3%. because: strong marginal ROAS (3.20x), 11 conversions",
+      "confidence": 0.3
+    },
+    {
+      "platform": "tiktok",
+      "current_share": 0.1823,
+      "recommended_share": 0.2166,
+      "shift_pct": 0.0343,
+      "current_budget": 182.32,
+      "recommended_budget": 216.58,
+      "rationale": "Increase tiktok allocation by 3.4%. because: 5 conversions",
+      "confidence": 0.9
+    },
+    {
+      "platform": "linkedin",
+      "current_share": 0.2561,
+      "recommended_share": 0.1681,
+      "shift_pct": -0.088,
+      "current_budget": 256.1,
+      "recommended_budget": 168.1,
+      "rationale": "Decrease linkedin allocation by 8.8%. because: low marginal ROAS (0.90x), below breakeven (ROAS 0.90x)",
+      "confidence": 0.3
+    }
+  ],
+  "allocation_confidence": 0.42,
+  "projected_portfolio_roas": 0.325,
+  "projected_incremental_revenue": -165.26,
+  "rebalance_triggered": true,
+  "blocked_reason": null,
+  "num_campaign_results": {
+    "google": 1,
+    "meta": 1,
+    "amazon": 1,
+    "tiktok": 1,
+    "linkedin": 1
+  },
+  "source_campaigns": 5,
+  "source_table": "sample_csv:drl/Training_Data/_demo_cross_platform_input_overrides.csv",
+  "total_budget_used": 1000.0,
+  "platform_metrics": {
+    "amazon": {
+      "campaigns": 1,
+      "avg_ctr": 0.045,
+      "avg_cvr": 0.06,
+      "avg_roas": 3.2,
+      "avg_cpc": 0.11,
+      "total_spend": 19.8
+    },
+    "google": {
+      "campaigns": 1,
+      "avg_ctr": 0.06,
+      "avg_cvr": 0.035,
+      "avg_roas": 2.1,
+      "avg_cpc": 0.14,
+      "total_spend": 29.400000000000002
+    },
+    "linkedin": {
+      "campaigns": 1,
+      "avg_ctr": 0.03,
+      "avg_cvr": 0.024,
+      "avg_roas": 0.9,
+      "avg_cpc": 0.24,
+      "total_spend": 33.6
+    },
+    "meta": {
+      "campaigns": 1,
+      "avg_ctr": 0.082,
+      "avg_cvr": 0.031,
+      "avg_roas": 1.95,
+      "avg_cpc": 0.102,
+      "total_spend": 24.479999999999997
+    },
+    "tiktok": {
+      "campaigns": 1,
+      "avg_ctr": 0.112,
+      "avg_cvr": 0.018,
+      "avg_roas": 0.2,
+      "avg_cpc": 0.092,
+      "total_spend": 23.919999999999998
+    }
+  },
+  "mode": "sample"
+}

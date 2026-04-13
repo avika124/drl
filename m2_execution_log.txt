@@ -1,0 +1,45 @@
+================================================================================
+M2 EXECUTION LOG — P-Execution (Cross-Platform Optimization)
+================================================================================
+Command: python -m drl.run_cross_platform_optimizer --sample \
+  --sample-input-csv drl/Training_Data/_demo_cross_platform_input_overrides.csv \
+  --sac-model-dir drl/m1_outputs --output-json drl/m2_outputs/cross_platform_result.json
+Timestamp: 2026-03-07
+
+--- INPUT FILES ---
+- Checkpoint: drl/m1_outputs/agent.pt (from M1)
+- State vectors: drl/Training_Data/_demo_cross_platform_input_overrides.csv
+  Rows: 7, Columns: ctr, cvr, roas, cpa, cpc, cpm, spend_velocity, etc.
+
+--- PARAMETERS ---
+--sac-model-dir=drl/m1_outputs, --per-platform-limit=5
+GuardrailConfig: max_bid_increase_pct=0.5, min_confidence_for_action=0.7
+CrossPlatformConfig: max_single_shift_pct=0.2, emergency_roas_floor=0.5
+
+--- INTERMEDIATE OUTPUTS ---
+- SAC inference: load_sac_for_inference(m1_outputs) -> SafeDRLAgent
+- Per-campaign: HybridDRLLLMOptimizer.optimize() (some failed: datetime offset)
+- Portfolio allocation: MarginalReturnEstimator + BudgetAllocator
+- Platform allocations: google, meta, amazon, tiktok, linkedin
+
+--- FINAL OUTPUT ---
+drl/m2_outputs/cross_platform_result.json
+  portfolio_roas, allocations[], projected_portfolio_roas, platform_metrics
+
+--- RUNTIME LOG (below) ---
+
+Emergency: tiktok ROAS 0.20 below floor 0.5
+Campaign 0 optimization failed: can't subtract offset-naive and offset-aware datetimes
+Campaign 0 optimization failed: can't subtract offset-naive and offset-aware datetimes
+Campaign 0 optimization failed: can't subtract offset-naive and offset-aware datetimes
+Campaign 0 optimization failed: can't subtract offset-naive and offset-aware datetimes
+Campaign 0 optimization failed: can't subtract offset-naive and offset-aware datetimes
+Wrote cross-platform result to drl/m2_outputs/cross_platform_result.json
+Top-level summary:
+{
+  "portfolio_roas": 1.584,
+  "projected_portfolio_roas": 0.325,
+  "allocation_confidence": 0.42,
+  "source_campaigns": 5,
+  "source_table": "sample_csv:drl/Training_Data/_demo_cross_platform_input_overrides.csv"
+}
