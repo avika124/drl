@@ -82,6 +82,21 @@
     .where-used-box ul { margin: 0.35rem 0 0 1rem; }
     .dim42-details summary { list-style: none; }
     .dim42-details summary::-webkit-details-marker { display: none; }
+    .help-explainer {
+      border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #fafafa 0%, #f0f0f0 100%);
+      font-size: 0.74rem; line-height: 1.5; color: var(--muted);
+    }
+    .help-explainer > summary {
+      cursor: pointer; padding: 0.45rem 0.65rem; font-weight: 600; color: var(--text);
+      list-style: none; user-select: none;
+    }
+    .help-explainer > summary::-webkit-details-marker { display: none; }
+    .help-explainer .help-inner { padding: 0 0.75rem 0.65rem; max-width: 58rem; }
+    .help-explainer h4 { margin: 0.55rem 0 0.25rem; font-size: 0.78rem; color: var(--text); font-weight: 600; }
+    .help-explainer p { margin: 0.35rem 0; }
+    .help-explainer ul { margin: 0.25rem 0 0.4rem 1.15rem; padding: 0; }
+    .help-explainer li { margin-bottom: 0.2rem; }
+    .help-explainer code { background: #e8e8e8; padding: 0.05rem 0.25rem; border-radius: 3px; font-size: 0.85em; }
     table.data-table-wide td.cell-val { max-width: 420px; white-space: pre-wrap; word-break: break-word; vertical-align: top; }
     .pager { display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; color: var(--muted); }
     .pager button { padding: 0.2rem 0.45rem; font-size: 0.72rem; cursor: pointer; border: 1px solid var(--border); background: #fff; border-radius: 3px; }
@@ -136,11 +151,28 @@
         <span><i class="m2"></i> M2 — Inference</span>
         <span style="margin-left:auto;">Scroll the canvas to see all nodes · <strong>Fit view</strong> centers the graph</span>
       </div>
+      <details class="help-explainer">
+        <summary>How to read this diagram (training vs inference, 42-d state, Data tables)</summary>
+        <div class="help-inner">
+          <h4>1. Two pipelines (the two colored bands)</h4>
+          <p><strong>Top — M1 → artifacts:</strong> Learn from data → replay buffer → train SAC → save <code>agent.pt</code> (+ JSON metadata). This is <strong>training</strong>.</p>
+          <p><strong>Bottom — M2:</strong> Load <code>agent.pt</code> → safe agent → hybrid optimizer. This is <strong>inference</strong> (running the policy), not training. The edge from the checkpoint node down to <strong>load_sac_for_inference</strong> means: the file you trained is the one you load for serving.</p>
+          <h4>2. What “42 dimensions” means</h4>
+          <p>It is <strong>not</strong> “42 columns” in the small Input/Output tables. It means there is <strong>one</strong> field, <code>state_vector</code>, whose type is <code>float32[42]</code>: <strong>one array of 42 numbers in a fixed order</strong> (42 slots).</p>
+          <p>The large <strong>42-row index list</strong> in the Data tab (when you scroll) names each slot (0 = <code>ctr</code>, …, 41 = constraint norms), matching <code>CampaignState</code> in <code>drl/state_action.py</code>.</p>
+          <h4>3. What the Input / Output tables are</h4>
+          <p>They are <strong>not</strong> a dump of every BigQuery row. They are a <strong>schema + sample</strong>: field names, types, example values, source, and where data flows next. “2 rows” in Input means <strong>two input fields</strong> (e.g. <code>campaign_id</code>, <code>run_id</code>), not two columns for the whole system.</p>
+          <h4>4. “Where the 42-d output is used” (on MockCampaignEnv)</h4>
+          <p>The <code>state_vector</code> (42 numbers) and <code>reward</code> are packaged into transitions <strong>(s, action, reward, next state, done)</strong> and sent to the <strong>Replay buffer</strong> node — the next box in the graph.</p>
+          <h4>5. One-line summary</h4>
+          <p><strong>Training</strong> writes a checkpoint; <strong>inference</strong> loads it. <strong>42-d</strong> = one state as <strong>42 ordered features</strong>. The small tables describe <strong>names and types</strong>; the long index table explains <strong>what each position means</strong>.</p>
+        </div>
+      </details>
       <svg id="edge-layer" width="1600" height="800"></svg>
       <div id="nodes-layer"></div>
     </div>
     <aside class="inspector" id="inspector">
-      <div class="empty-panel" id="inspector-empty">Select a node to open the details panel.</div>
+      <div class="empty-panel" id="inspector-empty">Select a node to open the details panel. <strong>Tip:</strong> On the canvas, expand <strong>“How to read this diagram…”</strong> above the graph for the full explanation of M1/M2, 42-d state, and the Data tables.</div>
       <div id="inspector-body" style="display:none;flex-direction:column;flex:1;min-height:0;">
         <div class="inspector-head">
           <h2 id="panel-title">—</h2>
