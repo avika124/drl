@@ -1105,7 +1105,7 @@
 
   /* ===== PINCHAS REQUIREMENTS: Data Explorer & Parameter Editor ===== */
 
-  function openDataExplorer(nodeId) {
+  window.openDataExplorer = function openDataExplorer(nodeId) {
     var n = nodes.find(function (x) { return x.id === nodeId; });
     if (!n) return;
 
@@ -1140,18 +1140,18 @@
     document.getElementById("data-config").innerHTML = configHtml;
   }
 
-  function closeDataExplorer() {
+  window.closeDataExplorer = function closeDataExplorer() {
     document.getElementById("data-explorer-modal").style.display = "none";
-  }
+  };
 
-  function switchDataTab(tabName) {
+  window.switchDataTab = function switchDataTab(tabName) {
     document.querySelectorAll(".data-tab-btn").forEach(function (el) { el.classList.remove("active"); });
     document.querySelectorAll(".tab-content").forEach(function (el) { el.classList.remove("active"); });
     event.target.classList.add("active");
     document.getElementById("data-" + tabName).classList.add("active");
   }
 
-  function openParamEditor(nodeId) {
+  window.openParamEditor = function openParamEditor(nodeId) {
     var n = nodes.find(function (x) { return x.id === nodeId; });
     if (!n) return;
 
@@ -1175,13 +1175,13 @@
     if (!formHtml) formHtml = "<p style='color:#999;'>No parameters to edit.</p>";
     document.getElementById("param-form-container").innerHTML = formHtml;
     window.currentParamNodeId = nodeId;
-  }
+  };
 
-  function closeParamEditor() {
+  window.closeParamEditor = function closeParamEditor() {
     document.getElementById("param-editor-modal").style.display = "none";
-  }
+  };
 
-  function applyParameterChanges() {
+  window.applyParameterChanges = function applyParameterChanges() {
     var nodeId = window.currentParamNodeId;
     var n = nodes.find(function (x) { return x.id === nodeId; });
     if (!n) return;
@@ -1198,7 +1198,7 @@
     refreshInspector();
   }
 
-  function runNode(nodeId) {
+  window.runNode = function runNode(nodeId) {
     var n = nodes.find(function (x) { return x.id === nodeId; });
     if (!n) return;
 
@@ -1212,7 +1212,7 @@
       setStatus("✅ " + n.title + " completed in " + n.execution.lastMs + "ms");
       refreshInspector();
     }, 400 + Math.random() * 300);
-  }
+  };
 
   /* Close modals when clicking outside */
   window.onclick = function (event) {
