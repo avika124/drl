@@ -114,6 +114,28 @@
     .meta-raw textarea { width: 100%; min-height: 200px; font-family: ui-monospace, monospace; font-size: 0.7rem; }
     .empty-panel { padding: 1rem; color: var(--muted); font-size: 0.8rem; }
     .status-bar { font-size: 0.72rem; color: var(--muted); padding: 0.3rem 0.65rem; border-top: 1px solid var(--border); background: #fff; }
+    .node-action-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.45rem; }
+    .btn-action { border: 1px solid var(--border); background: #fff; border-radius: 4px; padding: 0.28rem 0.55rem; cursor: pointer; font-size: 0.72rem; }
+    .btn-action.data { color: #217346; border-color: #217346; }
+    .btn-action.params { color: #d84315; border-color: #d84315; }
+    .btn-action.run { background: #4caf50; border-color: #4caf50; color: #fff; }
+    .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
+    .modal-tabs { display: flex; gap: 0.35rem; border-bottom: 1px solid var(--border); margin-bottom: 0.5rem; }
+    .modal-tab-btn { padding: 0.35rem 0.6rem; border: none; cursor: pointer; background: transparent; font-size: 0.74rem; color: var(--muted); border-bottom: 2px solid transparent; }
+    .modal-tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+    .modal-tab-panel { display: none; }
+    .modal-tab-panel.active { display: block; }
+    .modal-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+    .modal-table th { background: #f0f0f0; text-align: left; padding: 0.4rem; border: 1px solid #ddd; }
+    .modal-table td { padding: 0.4rem; border: 1px solid #ddd; vertical-align: top; }
+    .modal-table-wrap { overflow: auto; max-height: 50vh; border: 1px solid var(--border); border-radius: 4px; }
+    .param-field { display: flex; flex-direction: column; gap: 0.2rem; margin-bottom: 0.55rem; }
+    .param-field label { font-size: 0.75rem; font-weight: 600; }
+    .param-field input, .param-field select { border: 1px solid var(--border); border-radius: 4px; padding: 0.35rem 0.5rem; font-size: 0.74rem; }
+    .param-field .hint { font-size: 0.68rem; color: var(--muted); }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.6rem; }
+    .modal-footer button { border: 1px solid var(--border); background: #fff; border-radius: 4px; padding: 0.35rem 0.65rem; cursor: pointer; font-size: 0.74rem; }
+    .modal-footer button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
 
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; padding: 1rem; }
     .modal-overlay.open { display: flex; }
@@ -182,6 +204,11 @@
             <span id="panel-nodeid" style="color:var(--muted)"></span>
           </div>
           <div class="schema-warn" id="panel-schema-warn" style="display:none;"></div>
+          <div class="node-action-row">
+            <button type="button" class="btn-action data" id="btn-node-data">📊 View Data</button>
+            <button type="button" class="btn-action params" id="btn-node-params">⚙️ Edit Params</button>
+            <button type="button" class="btn-action run" id="btn-node-run">▶ Run Node</button>
+          </div>
         </div>
         <div class="tabs" id="main-tabs">
           <button type="button" class="active" data-tab="data">Data</button>
@@ -212,6 +239,33 @@
     <div class="modal-box fullscreen" id="code-modal-box">
       <header><h3 id="code-modal-title">Code</h3><button type="button" id="code-modal-close">Close</button></header>
       <div class="modal-body" style="padding:0;"><pre class="line-numbers" style="margin:0;"><code class="language-python" id="code-modal-code"></code></pre></div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="data-explorer-modal" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <header><h3 id="data-modal-title">📊 Data Explorer</h3><button type="button" id="data-modal-close">Close</button></header>
+      <div class="modal-body">
+        <div class="modal-tabs" id="data-modal-tabs">
+          <button type="button" class="modal-tab-btn active" data-tab="inputs">📥 Inputs</button>
+          <button type="button" class="modal-tab-btn" data-tab="outputs">📤 Outputs</button>
+          <button type="button" class="modal-tab-btn" data-tab="config">⚙️ Config</button>
+        </div>
+        <div id="data-modal-inputs" class="modal-tab-panel active"></div>
+        <div id="data-modal-outputs" class="modal-tab-panel"></div>
+        <div id="data-modal-config" class="modal-tab-panel"></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="param-editor-modal" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <header><h3 id="param-modal-title">⚙️ Edit Parameters</h3><button type="button" id="param-modal-close">Close</button></header>
+      <div class="modal-body">
+        <div id="param-form"></div>
+        <div class="modal-footer">
+          <button type="button" id="param-cancel">Cancel</button>
+          <button type="button" class="primary" id="param-apply">Apply &amp; Update Node</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -552,6 +606,25 @@
   document.getElementById("file-modal").addEventListener("click", function (e) {
     if (e.target.id === "file-modal") document.getElementById("file-modal").classList.remove("open");
   });
+  document.getElementById("btn-node-data").addEventListener("click", openDataExplorer);
+  document.getElementById("btn-node-params").addEventListener("click", openParamEditor);
+  document.getElementById("btn-node-run").addEventListener("click", function () {
+    if (!selectedId) return;
+    runNode(selectedId);
+  });
+  document.getElementById("data-modal-close").addEventListener("click", closeDataExplorer);
+  document.getElementById("data-explorer-modal").addEventListener("click", function (e) {
+    if (e.target.id === "data-explorer-modal") closeDataExplorer();
+  });
+  document.querySelectorAll("#data-modal-tabs .modal-tab-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () { switchDataModalTab(btn.dataset.tab); });
+  });
+  document.getElementById("param-modal-close").addEventListener("click", closeParamEditor);
+  document.getElementById("param-cancel").addEventListener("click", closeParamEditor);
+  document.getElementById("param-apply").addEventListener("click", applyParameterChanges);
+  document.getElementById("param-editor-modal").addEventListener("click", function (e) {
+    if (e.target.id === "param-editor-modal") closeParamEditor();
+  });
 
   function renderCodePanel(n) {
     var root = document.getElementById("panel-code");
@@ -640,6 +713,193 @@
     return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
   }
 
+  function getSelectedNode() {
+    if (!selectedId) return null;
+    return nodes.find(function (x) { return x.id === selectedId; }) || null;
+  }
+
+  function getTypeInputKind(t) {
+    var x = (t || "").toLowerCase();
+    if (x.indexOf("bool") >= 0) return "bool";
+    if (x.indexOf("int") >= 0 || x.indexOf("float") >= 0 || x.indexOf("number") >= 0) return "number";
+    if (x.indexOf("enum") >= 0 || x.indexOf("select") >= 0) return "select";
+    return "text";
+  }
+
+  function createSampleRows(schemaRows, limit) {
+    var n = Math.max(limit || 10, 10);
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      var row = {};
+      (schemaRows || []).forEach(function (c) {
+        var key = c.column || c.name || ("field_" + i);
+        var val = c.sample != null ? String(c.sample) : "—";
+        row[key] = i === 0 ? val : val + " · r" + (i + 1);
+      });
+      out.push(row);
+    }
+    return out;
+  }
+
+  function htmlSchemaTable(title, rows, cols) {
+    var html = '<div style="margin-bottom:0.55rem;"><strong style="font-size:0.78rem;">' + escapeHtml(title) + "</strong></div>";
+    html += '<div class="modal-table-wrap"><table class="modal-table"><thead><tr>';
+    cols.forEach(function (c) { html += "<th>" + escapeHtml(c.label) + "</th>"; });
+    html += "</tr></thead><tbody>";
+    (rows || []).forEach(function (r) {
+      html += "<tr>";
+      cols.forEach(function (c) {
+        var v = r[c.key] == null ? "—" : String(r[c.key]);
+        html += "<td>" + escapeHtml(v) + "</td>";
+      });
+      html += "</tr>";
+    });
+    if (!(rows || []).length) html += '<tr><td colspan="' + cols.length + '" style="color:#999;">No rows available.</td></tr>';
+    html += "</tbody></table></div>";
+    return html;
+  }
+
+  function htmlSampleDataRows(schemaRows, showFull) {
+    var rows = createSampleRows(schemaRows || [], showFull ? 25 : 10);
+    var keys = (schemaRows || []).map(function (r) { return r.column || r.name; }).filter(Boolean);
+    if (!keys.length) keys = ["sample_col_1", "sample_col_2"];
+    var html = '<div style="margin:0.5rem 0 0.3rem;"><strong style="font-size:0.78rem;">Sample Data Rows</strong></div>';
+    html += '<div class="modal-table-wrap"><table class="modal-table"><thead><tr>';
+    keys.forEach(function (k) { html += "<th>" + escapeHtml(k) + "</th>"; });
+    html += "</tr></thead><tbody>";
+    rows.forEach(function (r) {
+      html += "<tr>";
+      keys.forEach(function (k) { html += "<td>" + escapeHtml(String(r[k] == null ? "—" : r[k])) + "</td>"; });
+      html += "</tr>";
+    });
+    html += "</tbody></table></div>";
+    html += '<div style="margin-top:0.35rem;"><button type="button" id="btn-toggle-full-table" class="btn-action" style="font-size:0.72rem;">' + (showFull ? "Show 10 rows" : "View Full Table") + "</button></div>";
+    return html;
+  }
+
+  function switchDataModalTab(tab) {
+    document.querySelectorAll("#data-modal-tabs .modal-tab-btn").forEach(function (b) {
+      b.classList.toggle("active", b.dataset.tab === tab);
+    });
+    document.getElementById("data-modal-inputs").classList.toggle("active", tab === "inputs");
+    document.getElementById("data-modal-outputs").classList.toggle("active", tab === "outputs");
+    document.getElementById("data-modal-config").classList.toggle("active", tab === "config");
+  }
+
+  function openDataExplorer() {
+    var n = getSelectedNode();
+    if (!n) return;
+    var showFull = !!n._showFullTable;
+    document.getElementById("data-modal-title").textContent = "📊 Data Explorer: " + n.title + " (" + n.id + ")";
+    var inputCols = [
+      { key: "column", label: "Field" },
+      { key: "dataType", label: "Type" },
+      { key: "sample", label: "Sample" },
+      { key: "source", label: "Source" }
+    ];
+    var outputCols = [
+      { key: "column", label: "Field" },
+      { key: "dataType", label: "Type" },
+      { key: "sample", label: "Sample" },
+      { key: "usedIn", label: "Used In" }
+    ];
+    var configCols = [
+      { key: "name", label: "Parameter" },
+      { key: "value", label: "Value" },
+      { key: "type", label: "Type" },
+      { key: "source", label: "Source" }
+    ];
+    document.getElementById("data-modal-inputs").innerHTML =
+      htmlSchemaTable("Inputs schema", n.inputSchema || [], inputCols) +
+      htmlSampleDataRows(n.inputSchema || [], showFull);
+    document.getElementById("data-modal-outputs").innerHTML =
+      htmlSchemaTable("Outputs schema", n.outputSchema || [], outputCols) +
+      htmlSampleDataRows(n.outputSchema || [], showFull);
+    document.getElementById("data-modal-config").innerHTML = htmlSchemaTable("Configuration", n.configRows || [], configCols);
+    switchDataModalTab("inputs");
+    document.getElementById("data-explorer-modal").classList.add("open");
+    var t = document.getElementById("btn-toggle-full-table");
+    if (t) {
+      t.addEventListener("click", function () {
+        n._showFullTable = !showFull;
+        openDataExplorer();
+      });
+    }
+  }
+
+  function closeDataExplorer() {
+    document.getElementById("data-explorer-modal").classList.remove("open");
+  }
+
+  function openParamEditor() {
+    var n = getSelectedNode();
+    if (!n) return;
+    document.getElementById("param-modal-title").textContent = "⚙️ Edit Parameters: " + n.title + " (" + n.id + ")";
+    var root = document.getElementById("param-form");
+    var html = "";
+    (n.configRows || []).forEach(function (p, idx) {
+      var kind = getTypeInputKind(p.type);
+      html += '<div class="param-field"><label>' + escapeHtml(p.name || ("param_" + idx)) + "</label>";
+      if (kind === "bool") {
+        var checked = String(p.value).toLowerCase() === "true";
+        html += '<input type="checkbox" data-pi="' + idx + '" data-pkind="bool" ' + (checked ? "checked" : "") + " />";
+      } else if (kind === "select") {
+        html += '<select data-pi="' + idx + '" data-pkind="select"><option>' + escapeHtml(String(p.value || "")) + "</option><option>cpu</option><option>gpu</option><option>enabled</option><option>disabled</option></select>";
+      } else if (kind === "number") {
+        html += '<input type="number" step="any" data-pi="' + idx + '" data-pkind="number" value="' + escapeAttr(String(p.value == null ? "" : p.value)) + '" />';
+      } else {
+        html += '<input type="text" data-pi="' + idx + '" data-pkind="text" value="' + escapeAttr(String(p.value == null ? "" : p.value)) + '" />';
+      }
+      html += '<span class="hint">Type: ' + escapeHtml(p.type || "string") + " · Source: " + escapeHtml(p.source || "manual") + "</span></div>";
+    });
+    if (!(n.configRows || []).length) html = '<p style="font-size:0.74rem;color:#999;">No parameters available for this node.</p>';
+    root.innerHTML = html;
+    document.getElementById("param-editor-modal").classList.add("open");
+  }
+
+  function closeParamEditor() {
+    document.getElementById("param-editor-modal").classList.remove("open");
+  }
+
+  function applyParameterChanges() {
+    var n = getSelectedNode();
+    if (!n) return;
+    document.querySelectorAll("#param-form [data-pi]").forEach(function (el) {
+      var idx = parseInt(el.getAttribute("data-pi"), 10);
+      if (!n.configRows[idx]) return;
+      var kind = el.getAttribute("data-pkind");
+      var v = "";
+      if (kind === "bool") v = el.checked ? "true" : "false";
+      else v = el.value;
+      n.configRows[idx].value = String(v);
+    });
+    closeParamEditor();
+    refreshInspector();
+    setStatus("Parameters updated for " + n.id + ".");
+  }
+
+  function runNode(nodeId) {
+    var n = nodes.find(function (x) { return x.id === nodeId; });
+    if (!n) return;
+    n.execution.status = "running";
+    n.execution.lastMs = null;
+    if (selectedId === n.id) refreshInspector();
+    setLights(n.id, "ready");
+    setStatus("Running " + n.title + "...");
+    var started = Date.now();
+    setTimeout(function () {
+      n.execution.status = "success";
+      n.execution.lastMs = Date.now() - started;
+      (n.outputSchema || []).forEach(function (r) {
+        if (typeof r.sample === "string" && r.sample.length && r.sample.indexOf("see 42-d table") < 0) r.sample = r.sample + " *";
+      });
+      n.logs = (n.logs || "") + "[" + new Date().toLocaleTimeString() + "] node_run status=success ms=" + n.execution.lastMs + "\n";
+      setLights(n.id, "ok");
+      if (selectedId === n.id) refreshInspector();
+      setStatus("✅ " + n.title + " completed in " + n.execution.lastMs + " ms");
+    }, 320 + Math.floor(Math.random() * 420));
+  }
+
   function refreshInspector() {
     if (!selectedId) return;
     var n = nodes.find(function (x) { return x.id === selectedId; });
@@ -674,6 +934,8 @@
     document.querySelectorAll(".tab-panel").forEach(function (p) {
       p.classList.toggle("active", p.dataset.panel === tab);
     });
+    var canRun = (n.inputSchema || []).length > 0 || (n.configRows || []).length > 0;
+    document.getElementById("btn-node-run").disabled = !canRun;
   }
 
   function selectNode(id) {
@@ -984,6 +1246,13 @@
   });
   document.getElementById("code-modal").addEventListener("click", function (e) {
     if (e.target.id === "code-modal") document.getElementById("code-modal").classList.remove("open");
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    document.getElementById("file-modal").classList.remove("open");
+    document.getElementById("code-modal").classList.remove("open");
+    closeDataExplorer();
+    closeParamEditor();
   });
 
   document.getElementById("btn-fit").addEventListener("click", function () {

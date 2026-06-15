@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRL Single Platform Scenario Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 20px;
+            height: 100vh;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel h2 {
+            color: #2d5a7b;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .panel h3 {
+            color: #3d6a8b;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .param-group {
+            margin-bottom: 20px;
+        }
+
+        .param-row {
+            margin-bottom: 12px;
+        }
+
+        .param-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 4px;
+        }
+
+        .param-label strong {
+            color: #2d5a7b;
+        }
+
+        .param-value {
+            background: #f5f5f5;
+            color: #667eea;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-run:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-reset {
+            background: #f0f0f0;
+            color: #555;
+        }
+
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+
+        /* CENTER PANEL - WORKFLOW */
+        .workflow-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 30px;
+        }
+
+        .workflow-node {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 140px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .workflow-node:hover {
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+        }
+
+        .workflow-node::after {
+            content: '👁️';
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .workflow-node:hover::after {
+            opacity: 1;
+        }
+
+        .workflow-node.active {
+            background: #667eea;
+            color: white;
+            border-color: #764ba2;
+        }
+
+        .workflow-node h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .workflow-node p {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .workflow-arrow {
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .data-flow {
+            background: #f8f9ff;
+            border-left: 3px solid #667eea;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .data-flow strong {
+            color: #2d5a7b;
+        }
+
+        /* RIGHT PANEL - OUTPUTS */
+        .metric-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .metric-name {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .metric-current {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d5a7b;
+        }
+
+        .metric-change {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .metric-change.positive {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .metric-change.negative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .metric-change.neutral {
+            background: #e7e7e7;
+            color: #555;
+        }
+
+        .comparison-table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .recommendation-box {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 1px solid #c3e6cb;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 15px;
+        }
+
+        .recommendation-box h4 {
+            color: #155724;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .recommendation-box p {
+            color: #1e7e34;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .status-indicator.ready {
+            background: #28a745;
+        }
+
+        .status-indicator.processing {
+            background: #ffc107;
+        }
+
+        .status-indicator.error {
+            background: #dc3545;
+        }
+
+        .scroll-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* MODAL STYLES */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .modal-header h3 {
+            color: #2d5a7b;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .node-description {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .node-description strong {
+            color: #2d5a7b;
+        }
+
+        .edit-toggle {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .edit-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .edit-btn:hover {
+            background: #764ba2;
+        }
+
+        .edit-btn.active {
+            background: #28a745;
+        }
+
+        .apply-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .apply-btn:hover {
+            background: #218838;
+        }
+
+        .editable-cell {
+            position: relative;
+        }
+
+        .editable-cell input {
+            width: 100%;
+            padding: 4px;
+            border: 1px solid #667eea;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .edit-mode .editable-cell {
+            background: #fff9e6;
+        }
+
+        .change-indicator {
+            display: inline-block;
+            background: #ffc107;
+            color: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #667eea;
+        }
+
+        .comparison-table td {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+        }
+
+        .comparison-table tbody tr:hover {
+            background: #f0f0f0;
+        }
+
+        .before-cell {
+            background: #f0f0f0;
+        }
+
+        .after-cell {
+            background: #ffffff;
+        }
+
+        .unchanged {
+            color: #999;
+        }
+
+        .changed-up {
+            background: #d4edda;
+            color: #155724;
+            font-weight: 600;
+        }
+
+        .changed-down {
+            background: #f8d7da;
+            color: #721c24;
+            font-weight: 600;
+        }
+
+        .change-percent {
+            font-size: 11px;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.2s;
+        }
+
+        .schema-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+        }
+
+        .schema-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #667eea;
+        }
+
+        .schema-table td {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+
+        .schema-table tbody tr {
+            background: white;
+        }
+
+        .schema-table tbody tr:hover {
+            background: #f0f0f0;
+        }
+
+        .schema-table tbody tr:nth-child(odd) {
+            background: #ffffff;
+        }
+
+        .schema-table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .row-number {
+            color: #999;
+            font-weight: 600;
+            background: #f5f5f5;
+            text-align: center;
+            min-width: 50px;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            color: #333;
+        }
+
+        .field-type {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .field-source {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .scroll-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scroll-content::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 3px;
+        }
+
+        .scroll-content::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        .scroll-content::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- LEFT PANEL - INPUT PARAMETERS -->
+        <div class="panel">
+            <h2>📊 Campaign Inputs</h2>
+            <div class="scroll-content">
+                <div class="param-group">
+                    <h3>Current Metrics</h3>
+                    <div class="param-row">
+                        <div class="param-label">
+                            <strong>ROAS (Return on Ad Spend)</strong>
+                            <span class="param-value" id="roas-val">2.30</span>
+                        </div>
+                        <input type="range" id="roas" min="0.5" max="5" step="0.1" value="2.30">
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label">
+                            <strong>CPA (Cost Per Acquisition)</strong>
+                            <span class="param-value" id="cpa-val">$0.88</span>
+                        </div>
+                        <input type="range" id="cpa" min="0.2" max="3" step="0.05" value="0.88">
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label">
+                            <strong>CTR (Click-Through Rate %)</strong>
+                            <span class="param-value" id="ctr-val">2.8%</span>
+                        </div>
+                        <input type="range" id="ctr" min="0.5" max="10" step="0.1" value="2.8">
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label">
+                            <strong>CVR (Conversion Rate %)</strong>
+                            <span class="param-value" id="cvr-val">4.0%</span>
+                        </div>
+                        <input type="range" id="cvr" min="0.5" max="15" step="0.5" value="4.0">
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label">
+                            <strong>Daily Budget</strong>
+                            <span class="param-value" id="budget-val">$500</span>
+                        </div>
+                        <input type="range" id="budget" min="100" max="5000" step="50" value="500">
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label">
+                            <strong>Daily Impressions</strong>
+                            <span class="param-value" id="impressions-val">50K</span>
+                        </div>
+                        <input type="range" id="impressions" min="5000" max="200000" step="5000" value="50000">
+                    </div>
+                </div>
+
+                <div class="param-group">
+                    <h3>Constraints</h3>
+                    <div class="param-row">
+                        <div class="param-label">
+                            <strong>Target CPA</strong>
+                            <span class="param-value" id="target-cpa-val">$1.00</span>
+                        </div>
+                        <input type="range" id="target-cpa" min="0.3" max="2" step="0.1" value="1.00">
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label">
+                            <strong>Min ROAS</strong>
+                            <span class="param-value" id="min-roas-val">2.0x</span>
+                        </div>
+                        <input type="range" id="min-roas" min="1" max="4" step="0.1" value="2.0">
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label">
+                            <strong>Max Daily Budget</strong>
+                            <span class="param-value" id="max-budget-val">$750</span>
+                        </div>
+                        <input type="range" id="max-budget" min="200" max="10000" step="50" value="750">
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-run" onclick="runScenario()">▶ Run Scenario</button>
+                <button class="btn-reset" onclick="resetScenario()">↺ Reset</button>
+            </div>
+        </div>
+
+        <!-- CENTER PANEL - WORKFLOW -->
+        <div class="panel">
+            <h2>🔄 DRL Processing Pipeline</h2>
+            <div class="workflow-container">
+                <div class="workflow-node" id="node1">
+                    <h4>n1: Campaign State</h4>
+                    <p>42-D Vector</p>
+                </div>
+                <div class="workflow-arrow">↓</div>
+
+                <div class="workflow-node" id="node2">
+                    <h4>n2: Replay Buffer</h4>
+                    <p>Store Transitions</p>
+                </div>
+                <div class="workflow-arrow">↓</div>
+
+                <div class="workflow-node" id="node3">
+                    <h4>n3: SAC Agent</h4>
+                    <p>Learn Policy</p>
+                </div>
+                <div class="workflow-arrow">↓</div>
+
+                <div class="workflow-node" id="node5">
+                    <h4>n5: Load Model</h4>
+                    <p>Inference</p>
+                </div>
+                <div class="workflow-arrow">↓</div>
+
+                <div class="workflow-node" id="node6">
+                    <h4>n6: Safety Guard</h4>
+                    <p>Apply Constraints</p>
+                </div>
+                <div class="workflow-arrow">↓</div>
+
+                <div class="workflow-node active" id="node7">
+                    <h4>n7: Optimizer</h4>
+                    <p>Final Decision</p>
+                </div>
+
+                <div class="data-flow" id="data-flow-info">
+                    <strong>State:</strong> [0.028, 0.032, 2.30, ...] (42 features)<br>
+                    <strong>Action:</strong> Bid multiplier 1.2x, Budget +$100<br>
+                    <strong>Forecast:</strong> ROAS 2.5x → 2.8x ↑
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL - OUTPUTS -->
+        <div class="panel">
+            <h2>📈 Results & Recommendations</h2>
+            <div class="scroll-content">
+                <h3>Predicted Metrics (After Recommendation)</h3>
+
+                <div class="metric-box">
+                    <div class="metric-name">Return on Ad Spend</div>
+                    <div class="metric-value">
+                        <span class="metric-current" id="output-roas">2.58</span>
+                        <span class="metric-change positive" id="output-roas-change">+12% ↑</span>
+                    </div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-name">Cost Per Acquisition</div>
+                    <div class="metric-value">
+                        <span class="metric-current" id="output-cpa">$0.82</span>
+                        <span class="metric-change positive" id="output-cpa-change">-7% ↓</span>
+                    </div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-name">Daily Conversions</div>
+                    <div class="metric-value">
+                        <span class="metric-current" id="output-conversions">156</span>
+                        <span class="metric-change positive" id="output-conversions-change">+8% ↑</span>
+                    </div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-name">Daily Revenue</div>
+                    <div class="metric-value">
+                        <span class="metric-current" id="output-revenue">$1,290</span>
+                        <span class="metric-change positive" id="output-revenue-change">+15% ↑</span>
+                    </div>
+                </div>
+
+                <h3>Before vs After</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Current</th>
+                            <th>Predicted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ROAS</td>
+                            <td id="comp-roas-before">2.30x</td>
+                            <td id="comp-roas-after">2.58x</td>
+                        </tr>
+                        <tr>
+                            <td>CPA</td>
+                            <td id="comp-cpa-before">$0.88</td>
+                            <td id="comp-cpa-after">$0.82</td>
+                        </tr>
+                        <tr>
+                            <td>CTR</td>
+                            <td id="comp-ctr-before">2.80%</td>
+                            <td id="comp-ctr-after">2.95%</td>
+                        </tr>
+                        <tr>
+                            <td>Budget</td>
+                            <td id="comp-budget-before">$500</td>
+                            <td id="comp-budget-after">$575</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="recommendation-box">
+                    <h4>✓ AI Recommendation</h4>
+                    <p>
+                        <strong>Situation:</strong> Campaign performing well with good ROAS but room for growth.<br><br>
+                        <strong>Action:</strong> Increase daily budget by 15% ($500 → $575) and raise bid by 12%.<br><br>
+                        <strong>Why:</strong> CTR is strong (2.8%), conversions are stable, and ROAS exceeds minimum threshold. Additional budget will improve reach without sacrificing efficiency.<br><br>
+                        <strong>Expected Outcome:</strong> ROAS improves to 2.58x, CPA drops to $0.82, conversions increase by ~8%.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NODE DATA MODAL -->
+    <div id="nodeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Node Data</h3>
+                <div class="edit-toggle">
+                    <button class="edit-btn" id="editModeBtn" onclick="toggleEditMode()">✏️ Edit</button>
+                    <button class="apply-btn" id="applyBtn" onclick="applyChanges()" style="display: none;">✓ Apply Changes</button>
+                    <button class="modal-close" onclick="closeNodeModal()">&times;</button>
+                </div>
+            </div>
+
+            <div class="node-description" id="nodeDescription"></div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchNodeTab('inputs')">📥 Inputs</button>
+                <button class="tab" onclick="switchNodeTab('outputs')">📤 Outputs</button>
+                <button class="tab" onclick="switchNodeTab('features')">🧮 Features</button>
+                <button class="tab" onclick="switchNodeTab('config')">⚙️ Config</button>
+                <button class="tab" onclick="switchNodeTab('compare')">📊 Compare</button>
+            </div>
+
+            <!-- INPUTS TAB -->
+            <div id="inputs" class="tab-content active">
+                <h4 style="color: #2d5a7b; margin-bottom: 15px;">Input Data Schema</h4>
+                <table class="schema-table" id="inputsTable">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Sample</th>
+                            <th>Source</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inputsBody"></tbody>
+                </table>
+                <h4 style="color: #2d5a7b; margin-top: 20px; margin-bottom: 15px;">Actual Input Data Rows</h4>
+                <table class="schema-table" id="inputDataTable">
+                    <thead id="inputDataHead"></thead>
+                    <tbody id="inputDataBody"></tbody>
+                </table>
+            </div>
+
+            <!-- OUTPUTS TAB -->
+            <div id="outputs" class="tab-content">
+                <h4 style="color: #2d5a7b; margin-bottom: 15px;">Output Data Schema</h4>
+                <table class="schema-table" id="outputsTable">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Sample</th>
+                            <th>Used In</th>
+                        </tr>
+                    </thead>
+                    <tbody id="outputsBody"></tbody>
+                </table>
+                <h4 style="color: #2d5a7b; margin-top: 20px; margin-bottom: 15px;">Actual Output Data Rows</h4>
+                <table class="schema-table" id="outputDataTable">
+                    <thead id="outputDataHead"></thead>
+                    <tbody id="outputDataBody"></tbody>
+                </table>
+            </div>
+
+            <!-- FEATURES TAB -->
+            <div id="features" class="tab-content">
+                <h4 style="color: #2d5a7b; margin-bottom: 15px;">State Vector Features Used (CSV Format)</h4>
+                <p style="color: #666; font-size: 13px; margin-bottom: 15px;">Shows which of the 42 state dimensions this node uses</p>
+                <table class="schema-table" id="featuresDataTable">
+                    <thead id="featuresDataHead"></thead>
+                    <tbody id="featuresDataBody"></tbody>
+                </table>
+            </div>
+
+            <!-- COMPARE TAB -->
+            <div id="compare" class="tab-content">
+                <h4 style="color: #2d5a7b; margin-bottom: 15px;">Before vs After Comparison</h4>
+                <p style="color: #666; font-size: 13px; margin-bottom: 15px;">Shows what changed after you applied modifications and re-ran the scenario</p>
+
+                <h5 style="color: #667eea; margin-bottom: 12px; font-size: 13px; font-weight: 600;">📥 Input Changes</h5>
+                <table class="comparison-table" id="compareInputTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Field</th>
+                            <th style="width: 30%;">Before</th>
+                            <th style="width: 30%;">After</th>
+                            <th style="width: 20%;">Change</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compareInputBody"></tbody>
+                </table>
+
+                <h5 style="color: #667eea; margin-bottom: 12px; font-size: 13px; font-weight: 600;">📤 Output Changes</h5>
+                <table class="comparison-table" id="compareOutputTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Field</th>
+                            <th style="width: 30%;">Before</th>
+                            <th style="width: 30%;">After</th>
+                            <th style="width: 20%;">Change</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compareOutputBody"></tbody>
+                </table>
+
+                <div style="background: #f0f4ff; border-left: 4px solid #667eea; padding: 12px; border-radius: 4px; margin-top: 15px;">
+                    <strong style="color: #2d5a7b;">💡 How to Use:</strong>
+                    <div style="font-size: 12px; color: #555; margin-top: 8px; line-height: 1.6;">
+                        1. Make changes using the Edit button<br>
+                        2. Click Apply Changes<br>
+                        3. Click "Run Scenario" to execute<br>
+                        4. Come back to Compare tab to see what changed
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONFIG TAB -->
+            <div id="config" class="tab-content">
+                <h4 style="color: #2d5a7b; margin-bottom: 15px;">Configuration Parameters</h4>
+                <table class="schema-table" id="configTable">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                            <th>Type</th>
+                            <th>Source</th>
+                        </tr>
+                    </thead>
+                    <tbody id="configBody"></tbody>
+                </table>
+                <h4 style="color: #2d5a7b; margin-top: 20px; margin-bottom: 15px;">Parameter Descriptions</h4>
+                <div id="configDescriptions"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Parameter value updates
+        const params = {
+            roas: 2.30,
+            cpa: 0.88,
+            ctr: 2.8,
+            cvr: 4.0,
+            budget: 500,
+            impressions: 50000,
+            'target-cpa': 1.00,
+            'min-roas': 2.0,
+            'max-budget': 750
+        };
+
+        // Create 42-dimensional state from parameters
+        function generateStateVector() {
+            const roas = params.roas;
+            const cpa = params.cpa;
+            const ctr = params.ctr / 100;
+            const cvr = params.cvr / 100;
+            const budget = params.budget;
+            const impressions = params.impressions;
+
+            // Normalize values (0-1 scale)
+            const state = [];
+            // Core metrics (indices 0-5)
+            state.push(Math.min(ctr / 0.1, 1)); // CTR normalized
+            state.push(Math.min(cvr / 0.2, 1)); // CVR normalized
+            state.push(Math.min(roas / 5, 1)); // ROAS normalized
+            state.push(Math.min(1 - (cpa / 3), 1)); // CPA (inverted) normalized
+            state.push(0.65); // CPM
+            state.push(0.72); // CTR trend
+
+            // Volume metrics (indices 6-9)
+            state.push(Math.min(impressions / 200000, 1));
+            state.push(0.58); // Clicks
+            state.push(0.42); // Conversions
+            state.push(Math.min(budget / 5000, 1));
+
+            // Temporal metrics (indices 10-15)
+            for (let i = 0; i < 6; i++) {
+                state.push(Math.random() * 0.5 + 0.4);
+            }
+
+            // Trend metrics (indices 16-20)
+            for (let i = 0; i < 5; i++) {
+                state.push(Math.random() * 0.3 + 0.5);
+            }
+
+            // Competitive metrics (indices 21-23)
+            for (let i = 0; i < 3; i++) {
+                state.push(Math.random() * 0.4 + 0.3);
+            }
+
+            // ML scores (indices 24-28)
+            for (let i = 0; i < 5; i++) {
+                state.push(Math.random() * 0.3 + 0.6);
+            }
+
+            // Context metrics (indices 29-32)
+            state.push(0.65); // campaign age
+            state.push(0.72); // platform quality
+            state.push(0.58); // budget util
+            state.push(0.81); // goal alignment
+
+            // Spend metrics (indices 33-35)
+            state.push(Math.log(budget + 1) / 9);
+            state.push(0.54);
+            state.push(0.63);
+
+            // Audience metrics (indices 36-38)
+            state.push(0.68);
+            state.push(0.45);
+            state.push(0.71);
+
+            // Constraint features (indices 39-41)
+            state.push(Math.min(params['target-cpa'] / 2, 1)); // target_cpa_norm
+            state.push(Math.min(params['min-roas'] / 4, 1)); // min_roas_norm
+            state.push(Math.min(budget / params['max-budget'], 1)); // daily_budget_limit_norm
+
+            return state;
+        }
+
+        // DRL Algorithm Simulation
+        function runDRLAlgorithm(state) {
+            // Simple policy: based on state metrics
+            const roas = state[2] * 5; // denormalize
+            const cpa = (1 - state[3]) * 3; // denormalize
+            const budget = state[6] * 200000;
+
+            // Decision logic
+            let bidMultiplier = 1.0;
+            let budgetAdjustment = 0;
+
+            if (roas >= params['min-roas'] && cpa <= params['target-cpa']) {
+                // Safe to increase spend
+                bidMultiplier = 1.12;
+                budgetAdjustment = params.budget * 0.15;
+            } else if (roas < params['min-roas']) {
+                // Decrease spend
+                bidMultiplier = 0.95;
+                budgetAdjustment = -params.budget * 0.1;
+            } else if (cpa > params['target-cpa']) {
+                // Optimize for CPA
+                bidMultiplier = 0.98;
+                budgetAdjustment = -params.budget * 0.05;
+            }
+
+            // Apply constraints
+            bidMultiplier = Math.max(0.5, Math.min(2.0, bidMultiplier));
+            const newBudget = Math.max(100, Math.min(params['max-budget'], params.budget + budgetAdjustment));
+
+            return {
+                bidMultiplier,
+                budgetAdjustment: newBudget - params.budget,
+                newBudget
+            };
+        }
+
+        // Calculate predicted metrics
+        function calculatePredictedMetrics(decision) {
+            const bidMult = decision.bidMultiplier;
+            const budgetMult = decision.newBudget / params.budget;
+
+            // Simulate impact
+            const newRoas = params.roas * (0.95 + bidMult * 0.08) * (0.98 + budgetMult * 0.05);
+            const newCpa = params.cpa / (bidMult * 0.98) * (1 / budgetMult * 0.5 + 0.5);
+            const newCtr = params.ctr * (1 + bidMult * 0.05);
+            const newCvr = params.cvr * (1 + budgetMult * 0.04);
+
+            // Calculate derived metrics
+            const currentConversions = (params.impressions * (params.ctr / 100) * (params.cvr / 100));
+            const newConversions = (params.impressions * budgetMult * (newCtr / 100) * (newCvr / 100));
+
+            const currentRevenue = currentConversions * (params.roas * params.cpa);
+            const newRevenue = newConversions * (newRoas * newCpa);
+
+            return {
+                roas: Math.round(newRoas * 100) / 100,
+                cpa: Math.round(newCpa * 100) / 100,
+                ctr: Math.round(newCtr * 10) / 10,
+                cvr: Math.round(newCvr * 10) / 10,
+                conversions: Math.round(newConversions),
+                revenue: Math.round(newRevenue)
+            };
+        }
+
+        // Run scenario
+        function runScenario() {
+            // Animate workflow
+            document.querySelectorAll('.workflow-node').forEach((node, i) => {
+                setTimeout(() => {
+                    node.classList.add('active');
+                }, i * 200);
+            });
+
+            // Generate state
+            const state = generateStateVector();
+
+            // Run DRL
+            const decision = runDRLAlgorithm(state);
+
+            // Calculate predictions
+            const predictions = calculatePredictedMetrics(decision);
+
+            // Update data flow info
+            const stateStr = '[' + state.slice(0, 3).map(v => (v * 10).toFixed(2)).join(', ') + ', ...]';
+            document.getElementById('data-flow-info').innerHTML = `
+                <strong>State Vector (42-D):</strong> ${stateStr}<br>
+                <strong>Bid Multiplier:</strong> ${decision.bidMultiplier.toFixed(2)}x<br>
+                <strong>Budget Adjustment:</strong> ${decision.budgetAdjustment > 0 ? '+' : ''}$${Math.round(decision.budgetAdjustment)}<br>
+                <strong>AI Confidence:</strong> ${(Math.random() * 0.2 + 0.75).toFixed(2)} (Good)
+            `;
+
+            // Update output metrics
+            const roasChange = predictions.roas - params.roas;
+            const cpaChange = predictions.cpa - params.cpa;
+            const convChange = predictions.conversions - Math.round(params.impressions * (params.ctr / 100) * (params.cvr / 100));
+            const revChange = predictions.revenue - Math.round(Math.round(params.impressions * (params.ctr / 100) * (params.cvr / 100)) * (params.roas * params.cpa));
+
+            document.getElementById('output-roas').textContent = predictions.roas.toFixed(2) + 'x';
+            document.getElementById('output-roas-change').textContent = (roasChange > 0 ? '+' : '') + (roasChange * 100 / params.roas).toFixed(0) + '% ↑';
+            document.getElementById('output-roas-change').className = roasChange >= 0 ? 'metric-change positive' : 'metric-change negative';
+
+            document.getElementById('output-cpa').textContent = '$' + predictions.cpa.toFixed(2);
+            document.getElementById('output-cpa-change').textContent = (cpaChange > 0 ? '+' : '') + (cpaChange * 100 / params.cpa).toFixed(0) + '% ' + (cpaChange > 0 ? '↑' : '↓');
+            document.getElementById('output-cpa-change').className = cpaChange <= 0 ? 'metric-change positive' : 'metric-change negative';
+
+            document.getElementById('output-conversions').textContent = predictions.conversions;
+            document.getElementById('output-conversions-change').textContent = (convChange > 0 ? '+' : '') + (convChange * 100 / Math.round(params.impressions * (params.ctr / 100) * (params.cvr / 100))).toFixed(0) + '% ↑';
+
+            document.getElementById('output-revenue').textContent = '$' + (predictions.revenue / 1000).toFixed(1) + 'K';
+            document.getElementById('output-revenue-change').textContent = (revChange > 0 ? '+' : '') + (revChange * 100 / Math.round(Math.round(params.impressions * (params.ctr / 100) * (params.cvr / 100)) * (params.roas * params.cpa))).toFixed(0) + '% ↑';
+
+            // Update comparison table
+            document.getElementById('comp-roas-before').textContent = params.roas.toFixed(2) + 'x';
+            document.getElementById('comp-roas-after').textContent = predictions.roas.toFixed(2) + 'x';
+            document.getElementById('comp-cpa-before').textContent = '$' + params.cpa.toFixed(2);
+            document.getElementById('comp-cpa-after').textContent = '$' + predictions.cpa.toFixed(2);
+            document.getElementById('comp-ctr-before').textContent = params.ctr.toFixed(2) + '%';
+            document.getElementById('comp-ctr-after').textContent = predictions.ctr.toFixed(2) + '%';
+            document.getElementById('comp-budget-before').textContent = '$' + Math.round(params.budget);
+            document.getElementById('comp-budget-after').textContent = '$' + Math.round(decision.newBudget);
+        }
+
+        // Reset scenario
+        function resetScenario() {
+            params.roas = 2.30;
+            params.cpa = 0.88;
+            params.ctr = 2.8;
+            params.cvr = 4.0;
+            params.budget = 500;
+            params.impressions = 50000;
+            params['target-cpa'] = 1.00;
+            params['min-roas'] = 2.0;
+            params['max-budget'] = 750;
+
+            // Update UI
+            Object.keys(params).forEach(key => {
+                const elem = document.getElementById(key);
+                if (elem) {
+                    elem.value = params[key];
+                    updateParamDisplay(key);
+                }
+            });
+
+            document.querySelectorAll('.workflow-node').forEach(node => {
+                node.classList.remove('active');
+            });
+        }
+
+        // Update parameter display
+        function updateParamDisplay(paramName) {
+            const elem = document.getElementById(paramName);
+            const valElem = document.getElementById(paramName + '-val');
+
+            if (elem && valElem) {
+                const value = parseFloat(elem.value);
+                params[paramName] = value;
+
+                let displayValue = value.toFixed(2);
+                if (paramName === 'roas' || paramName === 'min-roas') {
+                    displayValue = value.toFixed(2) + 'x';
+                } else if (paramName === 'cpa' || paramName === 'target-cpa') {
+                    displayValue = '$' + value.toFixed(2);
+                } else if (paramName === 'budget' || paramName === 'max-budget') {
+                    displayValue = '$' + Math.round(value);
+                } else if (paramName === 'ctr' || paramName === 'cvr') {
+                    displayValue = value.toFixed(1) + '%';
+                } else if (paramName === 'impressions') {
+                    displayValue = (value / 1000).toFixed(0) + 'K';
+                }
+
+                valElem.textContent = displayValue;
+            }
+        }
+
+        // Setup listeners
+        Object.keys(params).forEach(key => {
+            const elem = document.getElementById(key);
+            if (elem) {
+                elem.addEventListener('input', () => updateParamDisplay(key));
+            }
+        });
+
+        // STATE VECTOR FEATURE DEFINITIONS (42 dimensions)
+        const stateFeatures = {
+            0: { name: 'CTR', group: 'Core Metrics', description: 'Click-Through Rate' },
+            1: { name: 'CVR', group: 'Core Metrics', description: 'Conversion Rate' },
+            2: { name: 'ROAS', group: 'Core Metrics', description: 'Return on Ad Spend' },
+            3: { name: 'CPA', group: 'Core Metrics', description: 'Cost Per Acquisition' },
+            4: { name: 'CPM', group: 'Core Metrics', description: 'Cost Per Mille (1000 impressions)' },
+            5: { name: 'CTR_Trend', group: 'Core Metrics', description: 'CTR trend direction' },
+            6: { name: 'Impressions', group: 'Volume Metrics', description: 'Daily impressions' },
+            7: { name: 'Clicks', group: 'Volume Metrics', description: 'Daily clicks' },
+            8: { name: 'Conversions', group: 'Volume Metrics', description: 'Daily conversions' },
+            9: { name: 'Spend', group: 'Volume Metrics', description: 'Daily spend' },
+            10: { name: 'Hour_of_Day', group: 'Temporal Metrics', description: 'Time of day (0-23)' },
+            11: { name: 'Day_of_Week', group: 'Temporal Metrics', description: 'Day of week (0-6)' },
+            12: { name: 'Season', group: 'Temporal Metrics', description: 'Season indicator' },
+            13: { name: 'Holiday', group: 'Temporal Metrics', description: 'Holiday flag' },
+            14: { name: 'Weekend', group: 'Temporal Metrics', description: 'Weekend flag' },
+            15: { name: 'Seasonality', group: 'Temporal Metrics', description: 'Seasonal trend' },
+            16: { name: 'ROAS_7d_trend', group: 'Trend Metrics', description: '7-day ROAS trend' },
+            17: { name: 'CTR_7d_trend', group: 'Trend Metrics', description: '7-day CTR trend' },
+            18: { name: 'CPA_7d_trend', group: 'Trend Metrics', description: '7-day CPA trend' },
+            19: { name: 'Spend_7d_trend', group: 'Trend Metrics', description: '7-day spend trend' },
+            20: { name: 'Conv_7d_trend', group: 'Trend Metrics', description: '7-day conversion trend' },
+            21: { name: 'Auction_Pressure', group: 'Competitive Metrics', description: 'Auction competition level' },
+            22: { name: 'Imp_Share', group: 'Competitive Metrics', description: 'Impression share' },
+            23: { name: 'Top_Pos_Rate', group: 'Competitive Metrics', description: 'Top position rate' },
+            24: { name: 'Audience_Quality', group: 'ML Scores', description: 'Audience quality score' },
+            25: { name: 'Creative_Fatigue', group: 'ML Scores', description: 'Creative fatigue level' },
+            26: { name: 'Bid_Prediction', group: 'ML Scores', description: 'Predicted optimal bid' },
+            27: { name: 'Churn_Risk', group: 'ML Scores', description: 'Customer churn prediction' },
+            28: { name: 'LTV_Score', group: 'ML Scores', description: 'Lifetime value score' },
+            29: { name: 'Campaign_Age', group: 'Context Metrics', description: 'Campaign age (days)' },
+            30: { name: 'Platform', group: 'Context Metrics', description: 'Platform type (Google/FB/etc)' },
+            31: { name: 'Budget_Utilization', group: 'Context Metrics', description: 'Budget used percentage' },
+            32: { name: 'Goal_Alignment', group: 'Context Metrics', description: 'Campaign goal alignment' },
+            33: { name: 'Log_Spend', group: 'Spend Metrics', description: 'Log-transformed spend' },
+            34: { name: 'Spend_Velocity', group: 'Spend Metrics', description: 'Spend acceleration' },
+            35: { name: 'Budget_Headroom', group: 'Spend Metrics', description: 'Budget remaining' },
+            36: { name: 'Audience_Segments', group: 'Audience Metrics', description: 'Active audience segments' },
+            37: { name: 'Frequency_Cap', group: 'Audience Metrics', description: 'Ad frequency' },
+            38: { name: 'Lookalike_Score', group: 'Audience Metrics', description: 'Lookalike audience score' },
+            39: { name: 'Target_CPA_Norm', group: 'Constraint Features', description: 'Target CPA (normalized)' },
+            40: { name: 'Min_ROAS_Norm', group: 'Constraint Features', description: 'Minimum ROAS requirement' },
+            41: { name: 'Daily_Budget_Limit_Norm', group: 'Constraint Features', description: 'Daily budget limit' }
+        };
+
+        // NODE DATA DEFINITIONS
+        const nodeData = {
+            node1: {
+                name: 'n1: MockCampaignEnv / BigQuery',
+                description: 'Fetches live campaign data from Google Ads, Facebook, and TikTok via BigQuery. Converts raw metrics (spend, CTR, CVR, etc.) into a 42-dimensional state vector that the AI can understand. Calculates a reward score (0-1) showing how well the campaign performed.',
+                featuresUsed: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41], // All 42
+                inputs: [
+                    { field: 'campaign_id', type: 'string', sample: 'cmp_7f3a', source: 'external: user input' },
+                    { field: 'run_id', type: 'string', sample: 'run_2026_04_03', source: 'external: user input' }
+                ],
+                outputs: [
+                    { field: 'state_vector', type: 'float32[42]', sample: '[0.028, 0.032, 2.30, ...]', usedIn: 'n2 Replay Buffer' },
+                    { field: 'reward', type: 'float', sample: '0.034', usedIn: 'n2 Replay Buffer' }
+                ],
+                config: [
+                    { param: 'state_dim', value: '42', type: 'int', source: 'config.yaml', description: 'Number of dimensions in state vector. Must match all nodes.' },
+                    { param: 'max_steps', value: '100', type: 'int', source: 'train.py', description: 'Maximum iterations per campaign episode. Higher = more data collected.' }
+                ]
+            },
+            node2: {
+                name: 'n2: Replay Buffer',
+                description: 'Stores up to 50,000 campaign transitions in priority order. Each transition includes: the campaign state, the action taken, the reward received, and the next campaign state. When the AI trains, it samples random mini-batches (64 transitions) from this buffer, prioritizing the most important learning examples.',
+                featuresUsed: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41], // All 42
+                inputs: [
+                    { field: 'state_vector', type: 'float32[42]', sample: '[0.028, 0.032, ...]', source: 'n1 MockCampaignEnv' },
+                    { field: 'reward', type: 'float', sample: '0.034', source: 'n1 MockCampaignEnv' },
+                    { field: 'action', type: 'float', sample: '0.52', source: 'n3 SACAgent' },
+                    { field: 'next_state', type: 'float32[42]', sample: '[0.029, 0.033, ...]', source: 'n1 MockCampaignEnv' }
+                ],
+                outputs: [
+                    { field: 'batch_states', type: 'float32[64, 42]', sample: '64 states', usedIn: 'n3 SACAgent' },
+                    { field: 'batch_rewards', type: 'float[64]', sample: '[0.034, 0.041, ...]', usedIn: 'n3 SACAgent' }
+                ],
+                config: [
+                    { param: 'buffer_size', value: '50000', type: 'int', source: 'config.yaml', description: 'Maximum transitions to store. Older data gets replaced when full.' },
+                    { param: 'batch_size', value: '64', type: 'int', source: 'config.yaml', description: 'Transitions per mini-batch. Larger = more stable but slower training.' },
+                    { param: 'alpha', value: '0.6', type: 'float', source: 'config.yaml', description: 'Prioritization strength. Higher = prioritize important experiences more.' }
+                ]
+            },
+            node3: {
+                name: 'n3: SACAgent (AI Brain)',
+                description: 'The core neural network that learns optimal campaign decisions using Soft Actor-Critic (SAC) algorithm. Trains on mini-batches of historical campaign transitions, adjusting its weights to maximize long-term campaign performance (ROAS, conversions, CPA). Outputs two networks: an actor (chooses actions) and a critic (evaluates action quality).',
+                featuresUsed: [0,1,2,3,4,5,6,7,8,9,16,17,18,19,20,24,25,26,27,28,31,32,39,40,41], // Core, Volume, Trends, ML, Context, Constraints
+                inputs: [
+                    { field: 'batch_states', type: 'float32[64, 42]', sample: '64 states', source: 'n2 Replay Buffer' },
+                    { field: 'batch_rewards', type: 'float[64]', sample: '[0.034, 0.041, ...]', source: 'n2 Replay Buffer' }
+                ],
+                outputs: [
+                    { field: 'actor_loss', type: 'float', sample: '0.0234', usedIn: 'monitoring' },
+                    { field: 'critic_loss', type: 'float', sample: '0.0145', usedIn: 'monitoring' },
+                    { field: 'policy', type: 'neural_network', sample: 'trained weights', usedIn: 'n4 Checkpoint' }
+                ],
+                config: [
+                    { param: 'learning_rate', value: '0.0003', type: 'float', source: 'config.yaml', description: 'How fast AI adjusts strategy. Lower = slower but more stable learning.' },
+                    { param: 'hidden_dim', value: '256', type: 'int', source: 'config.yaml', description: 'Neural network hidden layer size. Larger = more capacity to learn complex patterns.' },
+                    { param: 'gamma', value: '0.99', type: 'float', source: 'config.yaml', description: 'Discount factor for future rewards. How much to value future vs immediate rewards.' }
+                ]
+            },
+            node5: {
+                name: 'n5: Load SAC (Load Model)',
+                description: 'Loads the best-performing trained neural network model from disk (from node4 checkpoint). Prepares the model for inference mode (no more training). Takes the current campaign state as input and outputs an action recommendation (bid multiplier, budget adjustment).',
+                featuresUsed: [0,1,2,3,4,5,6,7,8,9,16,17,18,19,20,24,25,26,27,28,31,32,39,40,41], // Same as node3
+                inputs: [
+                    { field: 'checkpoint_path', type: 'string', sample: './models/sac_model.pt', source: 'file system' },
+                    { field: 'campaign_state', type: 'float32[42]', sample: '[0.028, 0.032, ...]', source: 'n1 MockCampaignEnv' }
+                ],
+                outputs: [
+                    { field: 'loaded_policy', type: 'neural_network', sample: 'trained weights', usedIn: 'n6 SafeDRLAgent' },
+                    { field: 'model_info', type: 'dict', sample: '{trained_episodes: 1000}', usedIn: 'logging' }
+                ],
+                config: [
+                    { param: 'load_best', value: 'true', type: 'bool', source: 'config.yaml', description: 'Load best-performing checkpoint (vs latest). Ensures highest quality model.' },
+                    { param: 'device', value: 'cuda', type: 'string', source: 'config.yaml', description: 'Where to run model (cuda=GPU for speed, cpu=always available).' }
+                ]
+            },
+            node6: {
+                name: 'n6: SafeDRLAgent (Safety Guard)',
+                description: 'Applies safety constraints to AI recommendations before execution. Prevents extreme actions (e.g., won\'t increase bids more than 2x or decrease more than 50%). Enforces business rules: respects daily budget limits, CPA targets, and minimum ROAS thresholds. Clips dangerous recommendations to safe levels.',
+                featuresUsed: [0,1,2,3,4,5,6,7,8,9,29,30,31,32,39,40,41], // Core, Volume, Context, Constraints
+                inputs: [
+                    { field: 'raw_action', type: 'float', sample: '0.85', source: 'n5 Load SAC' },
+                    { field: 'campaign_state', type: 'float32[42]', sample: '[0.028, 0.032, ...]', source: 'n1 MockCampaignEnv' },
+                    { field: 'constraints', type: 'dict', sample: '{max_bid_mult: 2.0}', source: 'config.yaml' }
+                ],
+                outputs: [
+                    { field: 'safe_action', type: 'float', sample: '0.52', usedIn: 'n7 HybridOptimizer' },
+                    { field: 'is_clipped', type: 'bool', sample: 'true', usedIn: 'logging' },
+                    { field: 'clip_reason', type: 'string', sample: 'max_bid_exceeded', usedIn: 'audit trail' }
+                ],
+                config: [
+                    { param: 'max_bid_multiplier', value: '2.0', type: 'float', source: 'config.yaml', description: 'Cannot increase bids more than 2x. Prevents runaway spending.' },
+                    { param: 'min_bid_multiplier', value: '0.5', type: 'float', source: 'config.yaml', description: 'Cannot decrease bids more than 50%. Prevents under-bidding.' },
+                    { param: 'max_budget_multiplier', value: '1.5', type: 'float', source: 'config.yaml', description: 'Cannot increase budget more than 1.5x. Caps monthly spend.' }
+                ]
+            },
+            node7: {
+                name: 'n7: HybridOptimizer (Final Recommendations)',
+                description: 'Combines DRL recommendations (40%), LLM business logic (30%), and outcome forecasts (30%) into a single final decision. Generates a human-readable 5-part narrative explaining the situation, decision, reasoning, confidence level, and reasonability check. Outputs actionable recommendation with predicted impact on ROAS, CPA, and conversions.',
+                featuresUsed: [0,1,2,3,4,5,6,7,8,9,16,17,18,19,20,24,25,26,27,28,29,30,31,32,39,40,41], // All relevant
+                inputs: [
+                    { field: 'safe_action', type: 'float', sample: '0.52', source: 'n6 SafeDRLAgent' },
+                    { field: 'campaign_state', type: 'float32[42]', sample: '[0.028, 0.032, ...]', source: 'n1 MockCampaignEnv' },
+                    { field: 'campaign_id', type: 'string', sample: 'cmp_7f3a', source: 'n1 MockCampaignEnv' }
+                ],
+                outputs: [
+                    { field: 'recommendation', type: 'dict', sample: '{bid_mult: 1.2, budget_+: $500}', usedIn: 'campaign execution' },
+                    { field: 'forecast', type: 'dict', sample: '{roas: 2.5, cpa: $0.65}', usedIn: 'monitoring' },
+                    { field: 'narrative', type: 'string', sample: 'Situation: High CTR, low CPA...', usedIn: 'human explanation' },
+                    { field: 'confidence', type: 'float', sample: '0.87', usedIn: 'decision confidence' }
+                ],
+                config: [
+                    { param: 'drl_weight', value: '0.4', type: 'float', source: 'config.yaml', description: 'Trust DRL recommendations 40%. Balanced between AI and business rules.' },
+                    { param: 'llm_weight', value: '0.3', type: 'float', source: 'config.yaml', description: 'Trust LLM guidance 30%. Business logic and constraints.' },
+                    { param: 'forecast_weight', value: '0.3', type: 'float', source: 'config.yaml', description: 'Trust outcome forecasts 30%. Predicted impact on KPIs.' }
+                ]
+            }
+        };
+
+        // Current node state data
+        let currentNodeState = {};
+
+        // Open node modal
+        function openNodeModal(nodeId) {
+            const data = nodeData[nodeId];
+            if (!data) return;
+
+            currentEditNodeId = nodeId;
+            isEditMode = false;
+            editedData = {};
+
+            document.getElementById('editModeBtn').classList.remove('active');
+            document.getElementById('editModeBtn').textContent = '✏️ Edit';
+            document.getElementById('applyBtn').style.display = 'none';
+            document.querySelector('.modal-content').classList.remove('edit-mode');
+
+            document.getElementById('modalTitle').textContent = data.name;
+
+            // Populate node description
+            document.getElementById('nodeDescription').innerHTML = `
+                <strong>What This Does:</strong><br>
+                ${data.description}
+            `;
+
+            // Clear tables
+            document.getElementById('inputsBody').innerHTML = '';
+            document.getElementById('outputsBody').innerHTML = '';
+            document.getElementById('configBody').innerHTML = '';
+
+            // Populate inputs
+            data.inputs.forEach(input => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${input.field}</strong></td>
+                    <td><span class="field-type">${input.type}</span></td>
+                    <td><code>${input.sample}</code></td>
+                    <td><span class="field-source">${input.source}</span></td>
+                `;
+                document.getElementById('inputsBody').appendChild(row);
+            });
+
+            // Populate input data table (CSV format)
+            const inputData = generateInputDataTable(nodeId);
+            const inputDataHead = document.getElementById('inputDataHead');
+            const inputDataBody = document.getElementById('inputDataBody');
+            inputDataHead.innerHTML = '';
+            inputDataBody.innerHTML = '';
+
+            if (inputData.headers.length > 0) {
+                const headerRow = document.createElement('tr');
+
+                // Add row number header
+                const rowNumTh = document.createElement('th');
+                rowNumTh.textContent = 'Row';
+                rowNumTh.style.backgroundColor = '#667eea';
+                rowNumTh.style.color = 'white';
+                rowNumTh.style.minWidth = '50px';
+                headerRow.appendChild(rowNumTh);
+
+                // Add data headers
+                inputData.headers.forEach(h => {
+                    const th = document.createElement('th');
+                    th.textContent = h;
+                    headerRow.appendChild(th);
+                });
+                inputDataHead.appendChild(headerRow);
+
+                // Add data rows with row numbers
+                inputData.rows.forEach((row, rowIdx) => {
+                    const tr = document.createElement('tr');
+
+                    // Add row number
+                    const rowNumTd = document.createElement('td');
+                    rowNumTd.textContent = `Row${rowIdx}`;
+                    rowNumTd.classList.add('row-number');
+                    tr.appendChild(rowNumTd);
+
+                    // Add data cells
+                    row.forEach(cell => {
+                        const td = document.createElement('td');
+                        td.textContent = cell;
+                        tr.appendChild(td);
+                    });
+                    inputDataBody.appendChild(tr);
+                });
+
+                // Store original data
+                storeOriginalData(nodeId, inputData.rows, []);
+            }
+
+            // Populate outputs
+            data.outputs.forEach(output => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${output.field}</strong></td>
+                    <td><span class="field-type">${output.type}</span></td>
+                    <td><code>${output.sample}</code></td>
+                    <td><span class="field-source">${output.usedIn}</span></td>
+                `;
+                document.getElementById('outputsBody').appendChild(row);
+            });
+
+            // Populate output data table (CSV format)
+            const outputData = generateOutputDataTable(nodeId);
+            const outputDataHead = document.getElementById('outputDataHead');
+            const outputDataBody = document.getElementById('outputDataBody');
+            outputDataHead.innerHTML = '';
+            outputDataBody.innerHTML = '';
+
+            if (outputData.headers.length > 0) {
+                const headerRow = document.createElement('tr');
+
+                // Add row number header
+                const rowNumTh = document.createElement('th');
+                rowNumTh.textContent = 'Row';
+                rowNumTh.style.backgroundColor = '#667eea';
+                rowNumTh.style.color = 'white';
+                rowNumTh.style.minWidth = '50px';
+                headerRow.appendChild(rowNumTh);
+
+                // Add data headers
+                outputData.headers.forEach(h => {
+                    const th = document.createElement('th');
+                    th.textContent = h;
+                    headerRow.appendChild(th);
+                });
+                outputDataHead.appendChild(headerRow);
+
+                // Add data rows with row numbers
+                outputData.rows.forEach((row, rowIdx) => {
+                    const tr = document.createElement('tr');
+
+                    // Add row number
+                    const rowNumTd = document.createElement('td');
+                    rowNumTd.textContent = `Row${rowIdx}`;
+                    rowNumTd.classList.add('row-number');
+                    tr.appendChild(rowNumTd);
+
+                    // Add data cells
+                    row.forEach(cell => {
+                        const td = document.createElement('td');
+                        td.textContent = cell;
+                        tr.appendChild(td);
+                    });
+                    outputDataBody.appendChild(tr);
+                });
+
+                // Update stored data
+                if (originalNodeData[nodeId]) {
+                    originalNodeData[nodeId].outputs = outputData.rows;
+                }
+                if (currentNodeData[nodeId]) {
+                    currentNodeData[nodeId].outputs = outputData.rows;
+                }
+            }
+
+            // Populate features table (CSV format)
+            const featuresUsed = data.featuresUsed;
+            const featuresDataHead = document.getElementById('featuresDataHead');
+            const featuresDataBody = document.getElementById('featuresDataBody');
+            featuresDataHead.innerHTML = '';
+            featuresDataBody.innerHTML = '';
+
+            // Create header row
+            const headerRow = document.createElement('tr');
+            ['Index', 'Feature Name', 'Group', 'Description', 'Status'].forEach(h => {
+                const th = document.createElement('th');
+                th.textContent = h;
+                headerRow.appendChild(th);
+            });
+            featuresDataHead.appendChild(headerRow);
+
+            // Create data rows for features used
+            featuresUsed.forEach((idx, rowIdx) => {
+                const feature = stateFeatures[idx];
+                const tr = document.createElement('tr');
+
+                const cells = [
+                    idx.toString(),
+                    feature.name,
+                    feature.group,
+                    feature.description,
+                    '✓ USED'
+                ];
+
+                cells.forEach((cell, i) => {
+                    const td = document.createElement('td');
+                    td.textContent = cell;
+                    if (i === 4) {
+                        td.style.background = '#d4edda';
+                        td.style.color = '#155724';
+                        td.style.fontWeight = '600';
+                    }
+                    tr.appendChild(td);
+                });
+                featuresDataBody.appendChild(tr);
+            });
+
+            // Populate config
+            data.config.forEach(cfg => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${cfg.param}</strong></td>
+                    <td><code>${cfg.value}</code></td>
+                    <td><span class="field-type">${cfg.type}</span></td>
+                    <td><span class="field-source">${cfg.source}</span></td>
+                `;
+                document.getElementById('configBody').appendChild(row);
+            });
+
+            // Populate config descriptions
+            const descContainer = document.getElementById('configDescriptions');
+            descContainer.innerHTML = '';
+            data.config.forEach(cfg => {
+                const desc = document.createElement('div');
+                desc.style.cssText = 'margin-bottom: 15px; padding: 10px; background: #f9f9f9; border-left: 3px solid #667eea; border-radius: 4px;';
+                desc.innerHTML = `
+                    <div style="font-weight: 600; color: #2d5a7b; margin-bottom: 5px;">${cfg.param} = ${cfg.value}</div>
+                    <div style="font-size: 12px; color: #666; line-height: 1.5;">${cfg.description}</div>
+                `;
+                descContainer.appendChild(desc);
+            });
+
+            // Reset to inputs tab
+            switchNodeTab('inputs');
+
+            // Show modal
+            document.getElementById('nodeModal').classList.add('show');
+        }
+
+        // Close node modal
+        function closeNodeModal() {
+            document.getElementById('nodeModal').classList.remove('show');
+        }
+
+        // Switch tabs
+        function switchNodeTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+
+            // Populate comparison when Compare tab is opened
+            if (tabName === 'compare' && currentEditNodeId) {
+                populateComparisonTables(currentEditNodeId);
+            }
+        }
+
+        // Generate input data tables
+        function generateInputDataTable(nodeId) {
+            const inputHeaders = {
+                node1: ['campaign_id', 'run_id'],
+                node2: ['state_vector', 'reward', 'action', 'next_state'],
+                node3: ['batch_states', 'batch_rewards', 'batch_actions', 'batch_next_states'],
+                node5: ['checkpoint_path', 'campaign_state'],
+                node6: ['raw_action', 'campaign_state', 'constraints'],
+                node7: ['safe_action', 'campaign_state', 'campaign_id']
+            };
+
+            const inputRows = {
+                node1: [
+                    ['cmp_7f3a', 'run_2026_04_03'],
+                    ['cmp_abc123', 'run_2026_04_10'],
+                    ['cmp_xyz789', 'run_2026_04_10_r2'],
+                    ['cmp_7f3a', 'run_2026_04_03_r2'],
+                    ['cmp_abc123', 'run_2026_04_03']
+                ],
+                node2: [
+                    ['[0.028, 0.032, 0.46, ...]', '0.034', '0.52', '[0.029, 0.033, 0.47, ...]'],
+                    ['[0.031, 0.035, 0.48, ...]', '0.041', '0.48', '[0.032, 0.036, 0.49, ...]'],
+                    ['[0.025, 0.030, 0.44, ...]', '0.027', '0.55', '[0.026, 0.031, 0.45, ...]'],
+                    ['[0.033, 0.038, 0.50, ...]', '0.052', '0.51', '[0.034, 0.039, 0.51, ...]'],
+                    ['[0.029, 0.034, 0.47, ...]', '0.039', '0.49', '[0.030, 0.035, 0.48, ...]']
+                ],
+                node3: [
+                    ['Shape (64, 42)', 'Shape (64,)', 'Shape (64,)', 'Shape (64, 42)'],
+                    ['64 normalized', '[0.034, 0.041, ...]', '[0.52, 0.48, ...]', 'Updated states'],
+                    ['Sampled from PER', 'Prioritized', 'Historical', 'Next observations'],
+                    ['Training batch 1', '64 reward values', '64 actions', 'Post-action states'],
+                    ['Importance weighted', 'Normalized 0-1', 'Scaled actions', 'Normalized states']
+                ],
+                node5: [
+                    ['./models/sac_ep1000.pt', '[0.028, 0.032, 0.46, ...]'],
+                    ['./models/sac_best.pt', '[0.031, 0.035, 0.48, ...]'],
+                    ['./models/sac_latest.pt', '[0.025, 0.030, 0.44, ...]'],
+                    ['./models/sac_trained.pt', '[0.029, 0.034, 0.47, ...]']
+                ],
+                node6: [
+                    ['0.85', '[0.028, 0.032, 0.46, ...]', 'max_bid: 2.0, max_budget: 1.5'],
+                    ['0.92', '[0.031, 0.035, 0.48, ...]', 'max_bid: 2.0, max_budget: 1.5'],
+                    ['0.68', '[0.025, 0.030, 0.44, ...]', 'max_bid: 2.0, max_budget: 1.5'],
+                    ['0.78', '[0.033, 0.038, 0.50, ...]', 'max_bid: 2.0, max_budget: 1.5']
+                ],
+                node7: [
+                    ['0.52', '[0.028, 0.032, 0.46, ...]', 'cmp_7f3a'],
+                    ['0.48', '[0.031, 0.035, 0.48, ...]', 'cmp_abc123'],
+                    ['0.55', '[0.025, 0.030, 0.44, ...]', 'cmp_xyz789'],
+                    ['0.51', '[0.033, 0.038, 0.50, ...]', 'cmp_7f3a']
+                ]
+            };
+
+            return { headers: inputHeaders[nodeId] || [], rows: inputRows[nodeId] || [] };
+        }
+
+        // Generate output data tables
+        function generateOutputDataTable(nodeId) {
+            const outputHeaders = {
+                node1: ['state_vector', 'reward'],
+                node2: ['batch_states', 'batch_rewards', 'batch_actions', 'batch_next_states'],
+                node3: ['actor_loss', 'critic_loss', 'q_value', 'policy'],
+                node5: ['loaded_policy', 'model_info'],
+                node6: ['safe_action', 'is_clipped', 'clip_reason'],
+                node7: ['recommendation', 'forecast', 'narrative', 'confidence']
+            };
+
+            const outputRows = {
+                node1: [
+                    ['[0.028, 0.032, 0.46, 0.293, ...]', '0.034'],
+                    ['[0.031, 0.035, 0.48, 0.305, ...]', '0.041'],
+                    ['[0.025, 0.030, 0.44, 0.281, ...]', '0.027'],
+                    ['[0.033, 0.038, 0.50, 0.315, ...]', '0.052'],
+                    ['[0.029, 0.034, 0.47, 0.299, ...]', '0.039']
+                ],
+                node2: [
+                    ['Shape (64, 42)', 'Shape (64,)', 'Shape (64,)', 'Shape (64, 42)'],
+                    ['64 normalized', '[0.034, 0.041, ...]', '[0.52, 0.48, ...]', '64 next states'],
+                    ['Sampled batch', 'Prioritized vals', 'Historical', 'Updated batch'],
+                    ['Training data', 'Reward signals', 'Action taken', 'Importance samples'],
+                    ['Minibatch 1', 'Normalized', 'DRL policy', 'Weighted']
+                ],
+                node3: [
+                    ['0.0234', '0.0145', '0.567', '<neural_net>'],
+                    ['0.0198', '0.0132', '0.574', '<updated_weights>'],
+                    ['0.0215', '0.0141', '0.561', '<trained_policy>'],
+                    ['0.0206', '0.0138', '0.569', '<q_network>']
+                ],
+                node5: [
+                    ['<neural_net_loaded>', '{episodes: 1000, loss: 0.0145, device: cuda}'],
+                    ['<policy_ready>', '{episodes: 1000, status: inference, device: cuda}'],
+                    ['<inference_net>', '{trained_eps: 1000, best_loss: 0.0145, ready: true}'],
+                    ['<model>', '{weights_loaded: true, device: cuda, mode: eval}']
+                ],
+                node6: [
+                    ['0.52', 'true', 'max_bid_exceeded'],
+                    ['0.48', 'false', 'none'],
+                    ['0.55', 'true', 'max_budget_exceeded'],
+                    ['0.51', 'false', 'within_limits']
+                ],
+                node7: [
+                    ['{bid: 1.12, budget: +75}', '{roas: 2.58, cpa: 0.82}', 'Strong CTR, safe increase...', '0.87'],
+                    ['{bid: 0.98, budget: -30}', '{roas: 2.45, cpa: 0.85}', 'CPA above target, reduce...', '0.75'],
+                    ['{bid: 1.05, budget: +50}', '{roas: 2.52, cpa: 0.81}', 'Balanced, slight increase...', '0.82'],
+                    ['{bid: 1.15, budget: +100}', '{roas: 2.61, cpa: 0.79}', 'Excellent metrics, grow...', '0.91']
+                ]
+            };
+
+            return { headers: outputHeaders[nodeId] || [], rows: outputRows[nodeId] || [] };
+        }
+
+        // Edit mode management
+        let isEditMode = false;
+        let currentEditNodeId = null;
+        let editedData = {};
+        let originalNodeData = {};
+        let currentNodeData = {};
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const editBtn = document.getElementById('editModeBtn');
+            const applyBtn = document.getElementById('applyBtn');
+            const modalContent = document.querySelector('.modal-content');
+
+            if (isEditMode) {
+                editBtn.classList.add('active');
+                editBtn.textContent = '✏️ Editing...';
+                applyBtn.style.display = 'block';
+                modalContent.classList.add('edit-mode');
+                makeDataEditable(currentEditNodeId);
+            } else {
+                editBtn.classList.remove('active');
+                editBtn.textContent = '✏️ Edit';
+                applyBtn.style.display = 'none';
+                modalContent.classList.remove('edit-mode');
+                makeDataReadOnly();
+            }
+        }
+
+        function makeDataEditable(nodeId) {
+            const inputDataBody = document.getElementById('inputDataBody');
+            const outputDataBody = document.getElementById('outputDataBody');
+            const configBody = document.getElementById('configBody');
+
+            // Make input data editable
+            inputDataBody.querySelectorAll('td').forEach(td => {
+                if (td.textContent.length > 0) {
+                    const originalValue = td.textContent;
+                    td.classList.add('editable-cell');
+                    td.innerHTML = `<input type="text" value="${originalValue}" onchange="recordChange('${nodeId}', '${originalValue}', this.value)">`;
+                }
+            });
+
+            // Make output data editable
+            outputDataBody.querySelectorAll('td').forEach(td => {
+                if (td.textContent.length > 0) {
+                    const originalValue = td.textContent;
+                    td.classList.add('editable-cell');
+                    td.innerHTML = `<input type="text" value="${originalValue}" onchange="recordChange('${nodeId}', '${originalValue}', this.value)">`;
+                }
+            });
+
+            // Make config editable
+            const configRows = configBody.querySelectorAll('tr');
+            configRows.forEach((row, idx) => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 2) {
+                    const valueCell = cells[1];
+                    const originalValue = valueCell.textContent;
+                    valueCell.classList.add('editable-cell');
+                    valueCell.innerHTML = `<input type="text" value="${originalValue}" onchange="recordChange('${nodeId}', '${originalValue}', this.value)">`;
+                }
+            });
+        }
+
+        function makeDataReadOnly() {
+            document.querySelectorAll('.editable-cell input').forEach(input => {
+                const parent = input.parentElement;
+                parent.textContent = input.value;
+                parent.classList.remove('editable-cell');
+            });
+        }
+
+        function recordChange(nodeId, oldValue, newValue) {
+            if (!editedData[nodeId]) {
+                editedData[nodeId] = {};
+            }
+            editedData[nodeId][oldValue] = newValue;
+        }
+
+        function applyChanges() {
+            if (!currentEditNodeId) return;
+
+            const changes = editedData[currentEditNodeId] || {};
+            const changeCount = Object.keys(changes).length;
+
+            if (changeCount === 0) {
+                alert('No changes made');
+                return;
+            }
+
+            // Update current node data with changes
+            Object.entries(changes).forEach(([oldVal, newVal]) => {
+                if (!currentNodeData[currentEditNodeId]) {
+                    currentNodeData[currentEditNodeId] = {};
+                }
+                currentNodeData[currentEditNodeId][oldVal] = newVal;
+            });
+
+            let updateMessage = `✅ Applied ${changeCount} change${changeCount > 1 ? 's' : ''}:\n\n`;
+            Object.entries(changes).forEach(([oldVal, newVal]) => {
+                updateMessage += `• ${oldVal} → ${newVal}\n`;
+            });
+
+            alert(updateMessage + '\n\nNow click "Run Scenario" to see the impact, then view the Compare tab.');
+
+            // Update comparison display
+            populateComparisonTables(currentEditNodeId);
+
+            // Close edit mode
+            toggleEditMode();
+
+            // Reset edit data
+            editedData[currentEditNodeId] = {};
+        }
+
+        function storeOriginalData(nodeId, inputRows, outputRows) {
+            if (!originalNodeData[nodeId]) {
+                originalNodeData[nodeId] = {
+                    inputs: JSON.parse(JSON.stringify(inputRows)),
+                    outputs: JSON.parse(JSON.stringify(outputRows))
+                };
+            }
+            if (!currentNodeData[nodeId]) {
+                currentNodeData[nodeId] = {
+                    inputs: JSON.parse(JSON.stringify(inputRows)),
+                    outputs: JSON.parse(JSON.stringify(outputRows))
+                };
+            }
+        }
+
+        function populateComparisonTables(nodeId) {
+            const original = originalNodeData[nodeId];
+            const current = currentNodeData[nodeId];
+
+            if (!original || !current) {
+                document.getElementById('compareInputBody').innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">No changes yet. Make edits and apply to compare.</td></tr>';
+                document.getElementById('compareOutputBody').innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">No changes yet. Run scenario to see results.</td></tr>';
+                return;
+            }
+
+            // Compare inputs
+            const inputBody = document.getElementById('compareInputBody');
+            inputBody.innerHTML = '';
+
+            const inputData = generateInputDataTable(nodeId);
+            if (inputData.headers && inputData.rows) {
+                inputData.headers.forEach((header, idx) => {
+                    inputData.rows.forEach((row, rowIdx) => {
+                        const before = original.inputs?.[rowIdx]?.[idx] || row[idx];
+                        const after = current.inputs?.[rowIdx]?.[idx] || row[idx];
+
+                        const tr = document.createElement('tr');
+
+                        const changed = before !== after;
+                        const changeClass = changed ? 'changed-up' : 'unchanged';
+
+                        tr.innerHTML = `
+                            <td><strong>${header}</strong></td>
+                            <td class="before-cell">${before}</td>
+                            <td class="after-cell">${after}</td>
+                            <td class="${changeClass}">${changed ? '✓ Changed' : '—'}</td>
+                        `;
+                        inputBody.appendChild(tr);
+                    });
+                });
+            }
+
+            // Compare outputs
+            const outputBody = document.getElementById('compareOutputBody');
+            outputBody.innerHTML = '';
+
+            const outputData = generateOutputDataTable(nodeId);
+            if (outputData.headers && outputData.rows) {
+                outputData.headers.forEach((header, idx) => {
+                    outputData.rows.forEach((row, rowIdx) => {
+                        const before = original.outputs?.[rowIdx]?.[idx] || row[idx];
+                        const after = current.outputs?.[rowIdx]?.[idx] || row[idx];
+
+                        const tr = document.createElement('tr');
+
+                        const changed = before !== after;
+                        const changeClass = changed ? 'changed-down' : 'unchanged';
+
+                        tr.innerHTML = `
+                            <td><strong>${header}</strong></td>
+                            <td class="before-cell">${before}</td>
+                            <td class="after-cell">${after}</td>
+                            <td class="${changeClass}">${changed ? '⚠ Changed' : '—'}</td>
+                        `;
+                        outputBody.appendChild(tr);
+                    });
+                });
+            }
+        }
+
+        // Add click listeners to nodes
+        document.querySelectorAll('.workflow-node').forEach(node => {
+            node.addEventListener('click', function() {
+                const nodeId = this.id;
+                openNodeModal(nodeId);
+            });
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('nodeModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeNodeModal();
+            }
+        });
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            runScenario();
+        });
+    </script>
+</body>
+</html>
