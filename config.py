@@ -236,10 +236,10 @@ class RewardConfig:
     Configuration for multi-objective reward function
     """
     # Primary objective weights (should sum to ~1.0)
-    roas_weight: float = 0.4
+    roas_weight: float = 0.3
     cpa_weight: float = 0.3
     conversion_weight: float = 0.2
-    ctr_weight: float = 0.1
+    ctr_weight: float = 0.2
     
     # Bonus/penalty weights
     efficiency_bonus_weight: float = 0.1

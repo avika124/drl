@@ -98,13 +98,13 @@ High reward (0.050-0.100):
 The system uses a **weighted formula**:
 
 ```
-reward = (ROAS × 0.4) + (CTR × 0.2) + (CVR × 0.2) + (1/CPA × 0.2)
+reward = (ROAS × 0.3) + (CTR × 0.2) + (CVR × 0.2) + (1/CPA × 0.3)
 
 Example with our campaign:
-- ROAS = 2.30 → contributes: 2.30 × 0.4 = 0.92
+- ROAS = 2.30 → contributes: 2.30 × 0.3 = 0.69
 - CTR = 0.12 → contributes: 0.12 × 0.2 = 0.024
 - CVR = 0.04 → contributes: 0.04 × 0.2 = 0.008
-- CPA = 0.88 → contributes: (1/0.88) × 0.2 = 0.227
+- CPA = 0.88 → contributes: (1/0.88) × 0.3 = 0.341
 
 Wait, that adds up to more than 0.034...
 
@@ -114,9 +114,9 @@ Actually, the system uses **normalized values** between 0-1:
 - If CVR=0.04 is "okay", normalized to 0.4
 - If CPA=0.88 is "acceptable", normalized to 0.7
 
-reward = (0.8 × 0.4) + (0.6 × 0.2) + (0.4 × 0.2) + (0.7 × 0.2)
-       = 0.32 + 0.12 + 0.08 + 0.14
-       = 0.66... but after applying additional penalties, = 0.034
+reward = (0.8 × 0.3) + (0.6 × 0.2) + (0.4 × 0.2) + (0.7 × 0.3)
+       = 0.24 + 0.12 + 0.08 + 0.21
+       = 0.65... but after applying additional penalties, = 0.034
 ```
 
 ### **What happens with reward?**

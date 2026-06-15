@@ -158,7 +158,7 @@ story.append(Paragraph(
     normal_style
 ))
 story.append(Paragraph(
-    "<b>reward:</b> A score from 0-1 indicating how well the campaign performed. Higher = better performance. Calculated from weighted formula: (ROAS × 0.4) + (CTR × 0.2) + (CVR × 0.2) + (1/CPA × 0.2)",
+    "<b>reward:</b> A score from 0-1 indicating how well the campaign performed. Higher = better performance. Calculated from weighted formula: (ROAS × 0.3) + (CTR × 0.2) + (CVR × 0.2) + (1/CPA × 0.3)",
     normal_style
 ))
 
